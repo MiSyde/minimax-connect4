@@ -1,18 +1,25 @@
 package core;
 
+import gui.Coin;
+import java.awt.Color;
+
 public class Game {
     Pos[][] board; // Default Connect-4 boards have 6 columns (x) & 7 rows (y)
-    Character player; // Y(ellow) | R(ed)
+    Color player; // Y(ellow) | R(ed)
 
-    Game(Character player) {
+    Game() {
         board = new Pos[6][7];
         for(int i = 0; i < 6; ++i){
             for(int j = 0; j < 7; ++j){
                 board[i][j] = new Pos(i, j, null);
             }
         }
-        this.player = player;
     }
+
+    public void addToBoard(int col, int row, Color color){
+        board[row][col] = new Pos(col, row, color);
+    }
+
 
     boolean checkVertical(Pos current){
         if(current.y >= 3 ){

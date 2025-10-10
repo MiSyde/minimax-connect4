@@ -10,8 +10,7 @@ public class Board {
         CoinPanel panel = new CoinPanel();
         window.setContentPane(panel);
         panel.addMouseListener(new BoardClickListener(panel));
-        window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        window.setUndecorated(false);
+        window.setSize(700,600);
         window.setBackground(Color.gray);
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         window.setVisible(true);

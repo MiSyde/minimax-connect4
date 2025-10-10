@@ -1,9 +1,10 @@
 package core;
+import java.awt.Color;
 
 public class Pos {
     int x;
     int y;
-    Character value;
+    Color value;
 
-    Pos(int x, int y, Character value) {}
+    Pos(int x, int y, Color value) {}
 }
