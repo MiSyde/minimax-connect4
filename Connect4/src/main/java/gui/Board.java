@@ -10,7 +10,7 @@ public class Board {
     public static void main(String[] args) {
         JFrame window = new JFrame("Connect 4");
         JFrame.setDefaultLookAndFeelDecorated(true);
-        window.setIconImage(new ImageIcon("C:\\Users\\batta\\Java\\Connect4\\icon.png").getImage());
+        window.setIconImage(new ImageIcon(Board.class.getResource("/gui/icon.png")).getImage());
         CoinPanel panel = new CoinPanel();
         window.setContentPane(panel);
         Game a = new Game();
