@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JPanel;
 
-public class CoinPanel extends Container {
+public class CoinPanel extends JPanel {
 
     private List<Coin> coins = new LinkedList<Coin>();
     static int turn = 0; // <- !! can't stay 0 if we use a loaded game
@@ -16,7 +16,10 @@ public class CoinPanel extends Container {
         this.repaint();
     }
 
-    public void paint(Graphics g){
+    @Override
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        setBackground(Color.GRAY);
         for(Coin coin : coins){
             coin.draw(g);
         }

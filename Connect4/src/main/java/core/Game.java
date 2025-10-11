@@ -7,7 +7,7 @@ public class Game {
     Pos[][] board; // Default Connect-4 boards have 6 columns (x) & 7 rows (y)
     Color player; // Y(ellow) | R(ed)
 
-    Game() {
+    public Game() {
         board = new Pos[6][7];
         for(int i = 0; i < 6; ++i){
             for(int j = 0; j < 7; ++j){
