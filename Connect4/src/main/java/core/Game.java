@@ -39,17 +39,21 @@ public class Game {
     }
 
 
+
     boolean checkVertical(int x, int y, Color player){
-        Pos current = board[x][y];
-        if(current.y <= 2){
-            return (board[current.x][current.y+1].value.equals(player)
-                    && board[current.x][current.y+2].value.equals(player)
-                    && board[current.x][current.y+3].value.equals(player));
+        int count = 1;
+        if(y >= 3){
+            for(int i = 0; i < 3; ++i){
+                if(board[x][y-i].value.equals(player)){
+                    ++count;
+                } else{
+                    break;
+                }
+            }
         }
-        return false;
+        return count == 4;
     }
     /*
-    ->y
     [][][][][][]
     [][][][][][]
     [][][][][][]
@@ -67,7 +71,7 @@ public class Game {
                 break;
             }
         }
-        for(int i = y-1; i > 0; --i){
+        for(int i = x-1; i >= 0; --i){
             if(board[i][y].value.equals(player)){
                 ++count;
             } else{
