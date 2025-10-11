@@ -5,7 +5,7 @@ import java.awt.Color;
 
 public class Game {
     Pos[][] board; // Default Connect-4 boards have 6 rows (x) & 7 columns (y)
-    Color player; // Y(ellow) | R(ed)
+    Boolean won = false;
 
     public Game() {
         board = new Pos[7][6];
@@ -27,30 +27,60 @@ public class Game {
 
     public void addToBoard(int x, int y, Color color){
         board[x][y].value = color;
+        if (y >= 3) {
+            won = checkVertical(x, y, color);
+        }
+        if(!won){
+            won = checkHorizontal(x, y, color);
+        }
+        if(won){
+            System.out.println("Won");
+        }
     }
 
 
-    boolean checkVertical(Pos current){
-        if(current.y >= 3 ){
-            if(board[current.y-1][current.x].value.equals(player)){
-                if(board[current.y-2][current.x].value.equals(player)){
-                    return board[current.y - 3][current.x].value.equals(player); // looks funky, but it saves us another if-else
-                } else{
-                    return false;
-                }
-            } else{
-                return false;
-            }
+    boolean checkVertical(int x, int y, Color player){
+        Pos current = board[x][y];
+        if(current.y <= 2){
+            return (board[current.x][current.y+1].value.equals(player)
+                    && board[current.x][current.y+2].value.equals(player)
+                    && board[current.x][current.y+3].value.equals(player));
         }
         return false;
     }
-
-    boolean checkHorizontal(Pos current){
-
-        return false;
+    /*
+    ->y
+    [][][][][][]
+    [][][][][][]
+    [][][][][][]
+    [][][][][][]
+    [][][][][][]
+    [][][][][][]
+    [][][][][][]
+     */
+    boolean checkHorizontal(int x, int y, Color player){
+        int count = 1;
+        for(int i = x+1; i < 7; ++i){
+            if(board[i][y].value.equals(player)){
+                ++count;
+            } else{
+                break;
+            }
+        }
+        for(int i = y-1; i > 0; --i){
+            if(board[i][y].value.equals(player)){
+                ++count;
+            } else{
+                break;
+            }
+        }
+        return count >= 4;
     }
 
-    boolean checkDiagonal(Pos current){
+    boolean checkLTDiagonal(int x, int y, Color player){ // Left-Tilted
+        return false;
+    }
+    boolean checkRTDiagonal(int x, int y, Color player){ // Right-Tilted
         return false;
     }
 }
