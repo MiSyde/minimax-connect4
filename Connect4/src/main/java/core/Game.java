@@ -4,20 +4,29 @@ import gui.Coin;
 import java.awt.Color;
 
 public class Game {
-    Pos[][] board; // Default Connect-4 boards have 6 columns (x) & 7 rows (y)
+    Pos[][] board; // Default Connect-4 boards have 6 rows (x) & 7 columns (y)
     Color player; // Y(ellow) | R(ed)
 
     public Game() {
-        board = new Pos[6][7];
-        for(int i = 0; i < 6; ++i){
-            for(int j = 0; j < 7; ++j){
-                board[i][j] = new Pos(i, j, null);
+        board = new Pos[7][6];
+        for(int x = 0; x < 7; ++x){
+            for(int y = 0; y < 6; ++y){
+                board[x][y] = new Pos(x, y, Color.BLACK);
             }
         }
     }
 
-    public void addToBoard(int col, int row, Color color){
-        board[row][col] = new Pos(col, row, color);
+    public int getCurrentY(int x){
+        for(int y = 0; y <= 5; ++y){
+            if(board[x][y].value.equals(Color.BLACK)){
+                return y;
+            }
+        }
+        return -1;
+    }
+
+    public void addToBoard(int x, int y, Color color){
+        board[x][y].value = color;
     }
 
 
