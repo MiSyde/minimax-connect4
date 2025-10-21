@@ -2,10 +2,11 @@ package core;
 
 import gui.Coin;
 import java.awt.Color;
+import java.io.Serializable;
 
-public class Game {
+public class Game implements Serializable {
     Pos[][] board; // Default Connect-4 boards have 6 rows (x) & 7 columns (y)
-    Boolean won = false;
+    boolean won = false;
 
     public Game() {
         board = new Pos[7][6];
@@ -23,6 +24,10 @@ public class Game {
             }
         }
         return -1;
+    }
+
+    public boolean getWon(){
+        return won;
     }
 
     public void addToBoard(int x, int y, Color color){

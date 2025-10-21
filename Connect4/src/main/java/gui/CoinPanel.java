@@ -1,19 +1,33 @@
 package gui;
 
+import core.Game;
+
 import java.awt.*;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JPanel;
+import core.Turn;
 
-public class CoinPanel extends JPanel {
+public class CoinPanel extends JPanel implements Serializable {
 
+    Game game;
     private List<Coin> coins = new LinkedList<Coin>();
-    static int turn = 0; // <- !! can't stay 0 if we use a loaded game
+    private int turnkimentes; // <- !! can't stay 0 if we use a loaded game
 
     public void addCoin(Coin coin) {
         coins.add(coin);
-        ++turn;
+        ++Turn.turn;
         this.repaint();
+    }
+
+    CoinPanel(Game game) {
+        super();
+        this.game = game;
+    }
+
+    public int getTurnkimentes() {
+        return turnkimentes;
     }
 
     private void boardLineSetup(Graphics g){
@@ -57,6 +71,9 @@ public class CoinPanel extends JPanel {
         boardLineSetup(g);
         for(Coin coin : coins){
             coin.draw(g);
+        }
+        if(game.getWon()){
+            // victory screen
         }
     }
 }

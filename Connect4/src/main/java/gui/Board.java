@@ -1,6 +1,7 @@
 package gui;
 
 import core.Game;
+import core.Turn;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,10 +18,10 @@ public class Board {
         } else{
             System.err.println("⚠️ Icon not found: /gui/icon.png");
         }
-        CoinPanel panel = new CoinPanel();
+        CoinPanel panel = new CoinPanel(new Game());
+        new Turn(panel);
         window.setContentPane(panel);
-        Game a = new Game();
-        panel.addMouseListener(new BoardClickListener(panel, a));
+        panel.addMouseListener(new BoardClickListener(panel));
         window.setSize(717,640);
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         window.setLocationRelativeTo(null);

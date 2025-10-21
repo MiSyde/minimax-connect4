@@ -4,15 +4,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import core.Game;
+import core.Turn;
 
 public class BoardClickListener extends MouseAdapter {
 
     private CoinPanel panel;
-    private Game game;
 
-    public BoardClickListener(CoinPanel panel, Game game) {
+    public BoardClickListener(CoinPanel panel) {
         this.panel = panel;
-        this.game = game;
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -33,16 +32,16 @@ public class BoardClickListener extends MouseAdapter {
         else if (e.getX() <= 700)
             x = 6;
         if(x != -1){
-            y = game.getCurrentY(x);
+            y = panel.game.getCurrentY(x);
         }
-        if(CoinPanel.turn % 2 == 0){
+        if(Turn.turn % 2 == 0){
             if(y != -1){
-                game.addToBoard(x, y, Color.RED);
+                panel.game.addToBoard(x, y, Color.RED);
                 panel.addCoin(new Coin.RedCoin(10 + x*100, 510-(100*y), 80));
             }
         } else{
             if(y != -1){
-                game.addToBoard(x, y, Color.YELLOW);
+                panel.game.addToBoard(x, y, Color.YELLOW);
                 panel.addCoin(new Coin.YellowCoin(10 + x*100, 510-(100*y), 80));
             }
         }
