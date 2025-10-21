@@ -5,21 +5,21 @@ import java.awt.Color;
 import java.io.Serializable;
 
 public class Game implements Serializable {
-    Pos[][] board; // Default Connect-4 boards have 6 rows (x) & 7 columns (y)
+    Color[][] board; // Default Connect-4 boards have 6 rows (x) & 7 columns (y)
     boolean won = false;
 
     public Game() {
-        board = new Pos[7][6];
+        board = new Color[7][6];
         for(int x = 0; x < 7; ++x){
             for(int y = 0; y < 6; ++y){
-                board[x][y] = new Pos(x, y, Color.BLACK);
+                board[x][y] = Color.BLACK;
             }
         }
     }
 
     public int getCurrentY(int x){
         for(int y = 0; y <= 5; ++y){
-            if(board[x][y].value.equals(Color.BLACK)){
+            if(board[x][y].equals(Color.BLACK)){
                 return y;
             }
         }
@@ -31,7 +31,7 @@ public class Game implements Serializable {
     }
 
     public void addToBoard(int x, int y, Color color){
-        board[x][y].value = color;
+        board[x][y] = color;
         if (y >= 3) {
             won = checkVertical(x, y, color);
         }
@@ -49,7 +49,7 @@ public class Game implements Serializable {
         int count = 1;
         if(y >= 3){
             for(int i = 0; i < 3; ++i){
-                if(board[x][y-i].value.equals(player)){
+                if(board[x][y-i].equals(player)){
                     ++count;
                 } else{
                     break;
@@ -70,14 +70,14 @@ public class Game implements Serializable {
     boolean checkHorizontal(int x, int y, Color player){
         int count = 1;
         for(int i = x+1; i < 7; ++i){
-            if(board[i][y].value.equals(player)){
+            if(board[i][y].equals(player)){
                 ++count;
             } else{
                 break;
             }
         }
         for(int i = x-1; i >= 0; --i){
-            if(board[i][y].value.equals(player)){
+            if(board[i][y].equals(player)){
                 ++count;
             } else{
                 break;
