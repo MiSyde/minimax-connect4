@@ -1,6 +1,5 @@
 package core;
 
-import gui.Coin;
 import java.awt.Color;
 import java.io.Serializable;
 
@@ -38,6 +37,12 @@ public class Game implements Serializable {
         if(!won){
             won = checkHorizontal(x, y, color);
         }
+        if(!won){
+            won = checkLDiagonal(x, y, color);
+        }
+        if(!won){
+            won = checkRDiagonal(x, y, color);
+        }
         if(won){
             System.out.println("Won");
         }
@@ -58,15 +63,7 @@ public class Game implements Serializable {
         }
         return count == 4;
     }
-    /*
-    [][][][][][]
-    [][][][][][]
-    [][][][][][]
-    [][][][][][]
-    [][][][][][]
-    [][][][][][]
-    [][][][][][]
-     */
+
     boolean checkHorizontal(int x, int y, Color player){
         int count = 1;
         for(int i = x+1; i < 7; ++i){
@@ -86,10 +83,63 @@ public class Game implements Serializable {
         return count >= 4;
     }
 
-    boolean checkLTDiagonal(int x, int y, Color player){ // Left-Tilted
-        return false;
+    boolean checkLDiagonal(int x, int y, Color player){ // Left
+        int i = x, j = y;
+        int count = 1;
+        while(i < 7 && j > 0) {
+            ++i;
+            --j;
+            if(board[i][j].equals(player)){
+                ++count;
+            } else{
+                break;
+            }
+        }
+        i = x;
+        j = y;
+        while(i > 0 && j < 6) {
+            --i;
+            ++j;
+            if(board[i][j].equals(player)){
+                ++count;
+            } else{
+                break;
+            }
+        }
+        return count >= 4;
     }
-    boolean checkRTDiagonal(int x, int y, Color player){ // Right-Tilted
-        return false;
+    /*
+        [][][][][][]
+        [][][][][][]
+        [][][][][][]
+        [][][][][][]
+        [][][][][][]
+        [][][][][][]
+        [][][][][][]
+         */
+    boolean checkRDiagonal(int x, int y, Color player){ // Right
+        int i = x, j = y;
+        int count = 1;
+        while(i < 7 && j < 6) {
+            ++i;
+            ++j;
+            if(board[i][j].equals(player)){
+                ++count;
+            } else{
+                break;
+            }
+        }
+        i = x;
+        j = y;
+        while(i > 0 && j > 0) {
+            --i;
+            --j;
+            if(board[i][j].equals(player)){
+                ++count;
+            } else{
+                break;
+            }
+        }
+        return count >= 4;
     }
 }
