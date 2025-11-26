@@ -11,7 +11,7 @@ public class BoardClickListener extends MouseAdapter {
 
     private final CoinPanel panel;
 
-    public BoardClickListener(CoinPanel panel, JFrame frame) {
+    public BoardClickListener(CoinPanel panel) {
         this.panel = panel;
     }
 
@@ -49,6 +49,13 @@ public class BoardClickListener extends MouseAdapter {
                     panel.addCoin(new Coin.YellowCoin(x * cellWidth + pauseWidth, (5 - y) * cellHight + pauseHight, cellHight - pauseHight * 2, cellWidth - pauseWidth * 2, x, y));
                 }
             }
+        } else {
+            if(panel.getTurn() % 2 == 0){
+                Board.showEndScreen("YELLOW won!");
+            } else {
+                Board.showEndScreen("RED won!");
+            }
+
         }
     }
 }

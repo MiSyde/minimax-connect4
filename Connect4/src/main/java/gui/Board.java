@@ -64,31 +64,111 @@ public class Board {
         showStartScreen();
     }
 
-    /*
-    public static void main(String[] args) {
-        JFrame window = new JFrame("Connect 4");
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        URL icon = Board.class.getResource("/gui/icon.png");
-        if(icon != null){
-            window.setIconImage(new ImageIcon(icon).getImage());
-        } else{
-            System.err.println("⚠️ Icon not found: /gui/icon.png");
-        }
-        CoinPanel panel = new CoinPanel(new Game());
-        window.setContentPane(panel);
-        panel.addMouseListener(new BoardClickListener(panel, window));
-        window.setSize(710,635);
-        window.addComponentListener(new ComponentAdapter() {
-            public void componentResized(ComponentEvent e) {
-                width = window.getWidth()-10;
-                height = window.getHeight()-35;
-                panel.recalcPos();
-                panel.repaint();
-            }
-        });
-        window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
+    private static JPanel createStartScreen() {
+        JPanel startPanel = new JPanel(new BorderLayout());
+        startPanel.setBackground(new Color(27,60,83));
+
+        JLabel title = new JLabel("Connect 4");
+        title.setFont(new Font("Arial", Font.BOLD, 40));
+        title.setForeground(new Color(227, 227, 227));
+        title.setBorder(BorderFactory.createEmptyBorder(50, 0, 50, 0));
+
+        JPanel modePanel = new JPanel(new GridLayout(2, 1));
+        modePanel.setBackground(new Color(27,60,83));
+        modePanel.setBorder(BorderFactory.createEmptyBorder(0, 100, 100, 100));
+
+        JButton pvp = createMenuButton("Player versus Player");
+        JButton pve = createMenuButton("Player versus AI");
+
+        pvp.addActionListener(_ -> startGame("PVP"));
+        pve.addActionListener(_ -> startGame("PVE"));
+
+        modePanel.add(pvp);
+        modePanel.add(pve);
+
+        startPanel.add(title, BorderLayout.NORTH);
+        startPanel.add(modePanel, BorderLayout.CENTER);
+
+        return startPanel;
     }
-*/
+
+    private static CoinPanel createGameScreen() {
+        Game game = new Game();
+
+        CoinPanel coinPanel = new CoinPanel(game);
+        coinPanel.addMouseListener(new BoardClickListener(coinPanel));
+
+        return coinPanel;
+    }
+
+    private static JPanel createEndScreen() {
+        JPanel endScreen = new JPanel(new BorderLayout());
+        endScreen.setBackground(new Color(27,60,83));
+
+        JLabel result = new JLabel("", JLabel.CENTER);
+        result.setFont(new Font("Arial", Font.BOLD, 40));
+        result.setForeground(new Color(227, 227, 227));
+        result.setBorder(BorderFactory.createEmptyBorder(100, 0, 50, 0));
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.setBackground(new Color(27,60,83));
+
+        JButton restartButton = new JButton("RESTART");
+        JButton newGameButton = new JButton("NEW GAME");
+        JButton exitButton = new JButton("EXIT");
+
+        restartButton.addActionListener(_ -> restartGame());
+        newGameButton.addActionListener(_ -> showStartScreen());
+        exitButton.addActionListener(_ -> System.exit(0));
+
+        buttonPanel.add(restartButton);
+        buttonPanel.add(newGameButton);
+        buttonPanel.add(exitButton);
+
+        endScreen.add(result, BorderLayout.CENTER);
+        endScreen.add(buttonPanel, BorderLayout.SOUTH);
+
+        endScreen.putClientProperty("results", result);
+
+        return endScreen;
+    }
+
+    private static JButton createMenuButton(String title) {
+        JButton button = new JButton(title);
+        button.setFont(new Font("Arial", Font.BOLD, 40));
+        button.setBackground(new Color(35,76,106));
+        button.setForeground(new Color(227, 227, 227));
+        button.setFocusPainted(false);
+        return button;
+    }
+
+    public static void showStartScreen() {
+        cardLayout.show(mainPanel, "START");
+    }
+
+    public static void showGameScreen() {
+        cardLayout.show(mainPanel, "GAME");
+        if(coinPanel != null) {
+            coinPanel.requestFocusInWindow();
+        }
+    }
+
+    public static void showEndScreen(String winnerMessage){
+        JPanel endScreen = (JPanel) mainPanel.getComponent(2);
+        JLabel result = (JLabel) endScreen.getClientProperty("results");
+        if(result != null) { result.setText(winnerMessage); }
+        cardLayout.show(mainPanel, "END");
+    }
+
+    private static void startGame(String gameMode) {
+        Game game = new Game();
+        showGameScreen();
+    }
+
+    private static void restartGame() {
+        Game game = new Game();
+
+        showStartScreen();
+    }
+
 }
