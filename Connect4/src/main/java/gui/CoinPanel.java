@@ -25,6 +25,10 @@ public class CoinPanel extends JPanel {
 
     public int getTurn() { return turn; }
 
+    public void setTurn(int turn) { this.turn = turn; }
+
+    public List<Coin> getCoins() { return coins; }
+
     private void boardLineSetup(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(4));

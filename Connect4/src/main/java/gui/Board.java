@@ -12,10 +12,10 @@ public class Board {
 
     static int width = 700;
     static int height = 600;
-    private static JFrame frame;
     private static CardLayout cardLayout;
     private static JPanel mainPanel;
     private static CoinPanel coinPanel;
+    private static String current;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -108,7 +108,6 @@ public class Board {
         JLabel result = new JLabel("", JLabel.CENTER);
         result.setFont(new Font("Arial", Font.BOLD, 40));
         result.setForeground(new Color(227, 227, 227));
-        result.setBorder(BorderFactory.createEmptyBorder(100, 0, 50, 0));
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.setBackground(new Color(27,60,83));
@@ -147,6 +146,7 @@ public class Board {
     }
 
     public static void showGameScreen() {
+        reset();
         cardLayout.show(mainPanel, "GAME");
         if(coinPanel != null) {
             coinPanel.requestFocusInWindow();
@@ -161,14 +161,27 @@ public class Board {
     }
 
     private static void startGame(String gameMode) {
-        Game game = new Game();
-        showGameScreen();
+        current = gameMode;
+        if(gameMode.equals("PVP")) {
+            showGameScreen();
+        } else {
+
+        }
     }
 
     private static void restartGame() {
-        Game game = new Game();
+        if(current.equals("PVP")){
+            showGameScreen();
+        } else {
 
-        showStartScreen();
+        }
+
+    }
+
+    private static void reset(){
+        coinPanel.getCoins().clear();
+        coinPanel.setTurn(0);
+        coinPanel.game.restartGame();
     }
 
 }

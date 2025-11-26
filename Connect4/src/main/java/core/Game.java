@@ -4,7 +4,7 @@ import java.awt.Color;
 
 public class Game {
     Color[][] board; // Default Connect-4 boards have 6 rows (x) & 7 columns (y)
-    boolean won = false;
+    boolean won;
 
     public Game() {
         board = new Color[7][6];
@@ -13,6 +13,17 @@ public class Game {
                 board[x][y] = Color.BLACK;
             }
         }
+        won = false;
+    }
+
+    public void restartGame() {
+        board = new Color[7][6];
+        for (int x = 0; x < 7; ++x) {
+            for (int y = 0; y < 6; ++y) {
+                board[x][y] = Color.BLACK;
+            }
+        }
+         won = false;
     }
 
     public int getCurrentY(int x) {
