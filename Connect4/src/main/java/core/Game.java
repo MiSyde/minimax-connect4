@@ -8,137 +8,76 @@ public class Game {
 
     public Game() {
         board = new Color[7][6];
-        for(int x = 0; x < 7; ++x){
-            for(int y = 0; y < 6; ++y){
+        for (int x = 0; x < 7; ++x) {
+            for (int y = 0; y < 6; ++y) {
                 board[x][y] = Color.BLACK;
             }
         }
     }
 
-    public int getCurrentY(int x){
-        for(int y = 0; y <= 5; ++y){
-            if(board[x][y].equals(Color.BLACK)){
+    public int getCurrentY(int x) {
+        for (int y = 0; y <= 5; ++y) {
+            if (board[x][y].equals(Color.BLACK)) {
                 return y;
             }
         }
         return -1;
     }
 
-    public boolean getWon(){
+    public boolean getWon() {
         return won;
     }
 
-    public void addToBoard(int x, int y, Color color){
+    public void addToBoard(int x, int y, Color color) {
         board[x][y] = color;
-        if (y >= 3) {
-            won = checkVertical(x, y, color);
-        }
-        if(!won){
-            won = checkHorizontal(x, y, color);
-        }
-        if(!won){
-            won = checkLDiagonal(x, y, color);
-        }
-        if(!won){
-            won = checkRDiagonal(x, y, color);
-        }
-        if(won){
+        won = checkWinStat(x, y, color);
+        if (won) {
             System.out.println("Won");
         }
     }
 
-
-
-    boolean checkVertical(int x, int y, Color player){
-        int count = 1;
-        if(y >= 3){
-            for(int i = 0; i < 3; ++i){
-                if(board[x][y-i].equals(player)){
+    public boolean checkWinStat(int x, int y, Color player) {
+        int count = 0;
+        int shuffle = 0;
+        int[][] directions = {{1, 0}, {-1, 0}, {1, -1}, {-1, 1}, {-1, -1}, {1, 1}, {0, -1}}; // jobbra, balra, jobbra-le, balra-fel, balra-le, jobbra-fel, le
+        for (int[] direction : directions) {
+            if (shuffle == 2) {
+                if (count - 1 >= 4) return true;
+                count = 0;
+                shuffle = 0;
+            }
+            int directionX = direction[0];
+            int directionY = direction[1];
+            for (int i = 0; i < 4; ++i) {
+                int currentX = x + directionX * i;
+                int currentY = y + directionY * i;
+                if (directionX < 0) {
+                    if (currentX < 0) {
+                        break;
+                    }
+                }
+                if (directionY < 0) {
+                    if (currentY < 0) {
+                        break;
+                    }
+                }
+                if(currentX >= 7 || currentY >= 6) { break; }
+                if (board[currentX][currentY].equals(player)) {
                     ++count;
-                } else{
-                    break;
                 }
             }
+            ++shuffle;
         }
-        return count == 4;
+        return count >= 4; // LE eredményét ellenőrzi, mivel az már nem lép bele a shufflebe
     }
 
-    boolean checkHorizontal(int x, int y, Color player){
-        int count = 1;
-        for(int i = x+1; i < 7; ++i){
-            if(board[i][y].equals(player)){
-                ++count;
-            } else{
-                break;
-            }
-        }
-        for(int i = x-1; i >= 0; --i){
-            if(board[i][y].equals(player)){
-                ++count;
-            } else{
-                break;
-            }
-        }
-        return count >= 4;
-    }
-
-    boolean checkLDiagonal(int x, int y, Color player){ // Left
-        int i = x, j = y;
-        int count = 1;
-        while(i < 7 && j > 0) {
-            ++i;
-            --j;
-            if(board[i][j].equals(player)){
-                ++count;
-            } else{
-                break;
-            }
-        }
-        i = x;
-        j = y;
-        while(i > 0 && j < 6) {
-            --i;
-            ++j;
-            if(board[i][j].equals(player)){
-                ++count;
-            } else{
-                break;
-            }
-        }
-        return count >= 4;
-    }
-    /*
-        [][][][][][]
-        [][][][][][]
-        [][][][][][]
-        [][][][][][]
-        [][][][][][]
-        [][][][][][]
-        [][][][][][]
-         */
-    boolean checkRDiagonal(int x, int y, Color player){ // Right
-        int i = x, j = y;
-        int count = 1;
-        while(i < 7 && j < 6) {
-            ++i;
-            ++j;
-            if(board[i][j].equals(player)){
-                ++count;
-            } else{
-                break;
-            }
-        }
-        i = x;
-        j = y;
-        while(i > 0 && j > 0) {
-            --i;
-            --j;
-            if(board[i][j].equals(player)){
-                ++count;
-            } else{
-                break;
-            }
-        }
-        return count >= 4;
-    }
 }
+/*
+        [0,0][0,1][0,2][0,3][0,4][0,5]
+        [1,0][1,1][1,2][1,3][1,4][1,5]
+        [2,0][2,1][2,2][2,3][2,4][2,5]
+        [3,0][3,1][3,2][3,3][3,4][3,5]
+        [4,0][4,1][4,2][4,3][4,4][4,5]
+        [5,0][5,1][5,2][5,3][5,4][5,5]
+        [6,0][6,1][6,2][6,3][6,4][6,5]
+*/

@@ -12,7 +12,6 @@ public class CoinPanel extends JPanel {
     Game game;
     private final List<Coin> coins = new LinkedList<>();
     private int turn; // <- !! can't stay 0 if we use a loaded game
-
     public void addCoin(Coin coin) {
         coins.add(coin);
         ++turn;
@@ -45,16 +44,13 @@ public class CoinPanel extends JPanel {
     }
 
     public void recalcPos(){
-        double widthRatio = (double)getWidth() / Board.oldWidth;
-        double heightRatio = (double)getHeight() / Board.oldHeight;
         int w = Board.width / 7;
         int h = Board.height / 6;
-        int w2 = w/10; // to position the coin in the middle
+        int w2 = w/10;
         int h2 = h/10;
+
         for(Coin coin : coins){
-            int x = (int)(coin.getX() * widthRatio);
-            int y = (int)(coin.getY() * heightRatio);
-            coin.setNewData(x, y, w-w2*2, h-h2*2);
+            coin.setNewData(w, h, w2, h2);
         }
     }
 

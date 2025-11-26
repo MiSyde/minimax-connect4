@@ -39,12 +39,12 @@ public class BoardClickListener extends MouseAdapter {
         if(panel.getTurn() % 2 == 0){
             if(y != -1){
                 panel.game.addToBoard(x, y, Color.RED);
-                panel.addCoin(new Coin.RedCoin(w2 + w*x, (Board.height-h+w2)-(h*y), h-h2*2, w-w2*2));
+                panel.addCoin(new Coin.RedCoin(w2 + w*x, (Board.height-h+w2)-(h*y), h-h2*2, w-w2*2, x ,y));
             }
         } else{
             if(y != -1){
                 panel.game.addToBoard(x, y, Color.YELLOW);
-                panel.addCoin(new Coin.YellowCoin(w2 + w*x, (Board.height-h+w2)-(h*y), h-h2*2, w-w2*2));
+                panel.addCoin(new Coin.YellowCoin(w2 + w*x, (Board.height-h+w2)-(h*y), h-h2*2, w-w2*2, x, y));
             }
         }
     }
