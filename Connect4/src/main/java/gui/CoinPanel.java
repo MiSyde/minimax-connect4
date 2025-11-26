@@ -85,7 +85,7 @@ public class CoinPanel extends JPanel {
             coin.draw(g);
         }
         if(game.getWon()){
-            // victory screen
+
         }
     }
 }
