@@ -15,37 +15,36 @@ public class BoardClickListener extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
         int x = -1;
         int y = -1;
-        int w = Board.width / 7;
-        int h = Board.height / 6;
-        int w2 = w/10; // to position the coin in the middle
-        int h2 = h/10;
-        if(e.getX() <= w)
+        int cellWidth = Board.width / 7;
+        int cellHight = Board.height / 6;
+        int pauseWidth = cellWidth / 10; // to position the coin in the middle
+        int pauseHight = cellHight / 10;
+        if(e.getX() <= cellWidth)
             x = 0;
-        else if(e.getX() <= w * 2)
+        else if(e.getX() <= cellWidth * 2)
             x = 1;
-        else if(e.getX() <=  w * 3)
+        else if(e.getX() <=  cellWidth * 3)
             x = 2;
-        else if(e.getX() <=  w * 4)
+        else if(e.getX() <=  cellWidth * 4)
             x = 3;
-        else if(e.getX() <= w * 5)
+        else if(e.getX() <= cellWidth * 5)
             x = 4;
-        else if(e.getX() <= w * 6)
+        else if(e.getX() <= cellWidth * 6)
             x = 5;
         else if (e.getX() <= Board.width)
             x = 6;
         if(x != -1){
             y = panel.game.getCurrentY(x);
         }
-        if(panel.getTurn() % 2 == 0){
-            if(y != -1){
+        if(y != -1){
+            if(panel.getTurn() % 2 == 0){
                 panel.game.addToBoard(x, y, Color.RED);
-                panel.addCoin(new Coin.RedCoin(w2 + w*x, (Board.height-h+w2)-(h*y), h-h2*2, w-w2*2, x ,y));
-            }
-        } else{
-            if(y != -1){
+                panel.addCoin(new Coin.RedCoin(x * cellWidth + pauseWidth, (5 - y) * cellHight + pauseHight, cellHight - pauseHight * 2, cellWidth - pauseWidth * 2, x, y));
+            } else{
                 panel.game.addToBoard(x, y, Color.YELLOW);
-                panel.addCoin(new Coin.YellowCoin(w2 + w*x, (Board.height-h+w2)-(h*y), h-h2*2, w-w2*2, x, y));
+                panel.addCoin(new Coin.YellowCoin(x * cellWidth + pauseWidth, (5 - y) * cellHight + pauseHight, cellHight - pauseHight * 2, cellWidth - pauseWidth * 2, x, y));
             }
         }
+
     }
 }

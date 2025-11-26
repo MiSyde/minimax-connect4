@@ -32,11 +32,11 @@ public abstract class Coin {
 
     public int getWidth() { return width; }
 
-    public void setNewData(int w, int h, int w2, int h2) {
-        this.x = column * w + w2;
-        this.y = (5-row) * h + h2;
-        this.height = h - h2 * 2;
-        this.width = w - w2 * 2;
+    public void setNewData(int cellWidth, int cellHight, int pauseWidth, int pauseHight) {
+        this.x = column * cellWidth + pauseWidth;
+        this.y = (5-row) * cellHight + pauseHight;
+        this.height = cellHight - pauseHight * 2;
+        this.width = cellWidth - pauseWidth * 2;
     }
 
     public abstract void draw(Graphics g);

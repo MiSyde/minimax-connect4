@@ -44,13 +44,13 @@ public class CoinPanel extends JPanel {
     }
 
     public void recalcPos(){
-        int w = Board.width / 7;
-        int h = Board.height / 6;
-        int w2 = w/10;
-        int h2 = h/10;
+        int cellWidth = Board.width / 7;
+        int cellHight = Board.height / 6;
+        int pauseWidth = cellWidth / 10;
+        int pauseHight = cellHight / 10;
 
         for(Coin coin : coins){
-            coin.setNewData(w, h, w2, h2);
+            coin.setNewData(cellWidth, cellHight, pauseWidth, pauseHight);
         }
     }
 

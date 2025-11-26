@@ -10,9 +10,7 @@ import java.net.URL;
 public class Board {
 
     static int width = 700;
-    static int oldWidth = 700;
     static int height = 600;
-    static int oldHeight = 600;
 
     public static void main(String[] args) {
         JFrame window = new JFrame("Connect 4");
@@ -29,8 +27,6 @@ public class Board {
         window.setSize(710,635);
         window.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
-                oldWidth = width;
-                oldHeight = height;
                 width = window.getWidth()-10;
                 height = window.getHeight()-35;
                 panel.recalcPos();
