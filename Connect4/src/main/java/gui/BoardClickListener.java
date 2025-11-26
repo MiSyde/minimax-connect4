@@ -3,12 +3,10 @@ package gui;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import core.Game;
-import core.Turn;
 
 public class BoardClickListener extends MouseAdapter {
 
-    private CoinPanel panel;
+    private final CoinPanel panel;
 
     public BoardClickListener(CoinPanel panel) {
         this.panel = panel;
@@ -17,32 +15,36 @@ public class BoardClickListener extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
         int x = -1;
         int y = -1;
-        if(e.getX() <= 100)
+        int w = Board.width / 7;
+        int h = Board.height / 6;
+        int w2 = w/10; // to position the coin in the middle
+        int h2 = h/10;
+        if(e.getX() <= w)
             x = 0;
-        else if(e.getX() <= 200)
+        else if(e.getX() <= w * 2)
             x = 1;
-        else if(e.getX() <= 300)
+        else if(e.getX() <=  w * 3)
             x = 2;
-        else if(e.getX() <= 400)
+        else if(e.getX() <=  w * 4)
             x = 3;
-        else if(e.getX() <= 500)
+        else if(e.getX() <= w * 5)
             x = 4;
-        else if(e.getX() <= 600)
+        else if(e.getX() <= w * 6)
             x = 5;
-        else if (e.getX() <= 700)
+        else if (e.getX() <= Board.width)
             x = 6;
         if(x != -1){
             y = panel.game.getCurrentY(x);
         }
-        if(Turn.turn % 2 == 0){
+        if(panel.getTurn() % 2 == 0){
             if(y != -1){
                 panel.game.addToBoard(x, y, Color.RED);
-                panel.addCoin(new Coin.RedCoin(10 + x*100, 510-(100*y), 80));
+                panel.addCoin(new Coin.RedCoin(w2 + w*x, (Board.height-h+w2)-(h*y), h-h2*2, w-w2*2));
             }
         } else{
             if(y != -1){
                 panel.game.addToBoard(x, y, Color.YELLOW);
-                panel.addCoin(new Coin.YellowCoin(10 + x*100, 510-(100*y), 80));
+                panel.addCoin(new Coin.YellowCoin(w2 + w*x, (Board.height-h+w2)-(h*y), h-h2*2, w-w2*2));
             }
         }
     }

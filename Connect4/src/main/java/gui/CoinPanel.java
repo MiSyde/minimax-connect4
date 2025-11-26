@@ -3,21 +3,19 @@ package gui;
 import core.Game;
 
 import java.awt.*;
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JPanel;
-import core.Turn;
 
-public class CoinPanel extends JPanel implements Serializable {
+public class CoinPanel extends JPanel {
 
     Game game;
-    private List<Coin> coins = new LinkedList<Coin>();
-    private int turnkimentes; // <- !! can't stay 0 if we use a loaded game
+    private final List<Coin> coins = new LinkedList<>();
+    private int turn; // <- !! can't stay 0 if we use a loaded game
 
     public void addCoin(Coin coin) {
         coins.add(coin);
-        ++Turn.turn;
+        ++turn;
         this.repaint();
     }
 
@@ -26,9 +24,7 @@ public class CoinPanel extends JPanel implements Serializable {
         this.game = game;
     }
 
-    public int getTurnkimentes() {
-        return turnkimentes;
-    }
+    public int getTurn() { return turn; }
 
     private void boardLineSetup(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
@@ -36,25 +32,45 @@ public class CoinPanel extends JPanel implements Serializable {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Color linecolor = new Color(96, 95, 95);
         g.setColor(linecolor);
+        int w = Board.width / 7;
+        int h = Board.height / 6;
         // Vertical
         for(int i = 1; i <= 7; ++ i){
-            g.drawLine(i*100, 0, i*100, 600);
+            g.drawLine(i*w, 0, i*w, Board.height);
         }
         // Horizontal
         for(int i = 1; i <= 6; ++ i) {
-            g.drawLine(0, 100 * i, 700, 100 * i);
+            g.drawLine(0, h * i, Board.width, h * i);
+        }
+    }
+
+    public void recalcPos(){
+        double widthRatio = (double)getWidth() / Board.oldWidth;
+        double heightRatio = (double)getHeight() / Board.oldHeight;
+        int w = Board.width / 7;
+        int h = Board.height / 6;
+        int w2 = w/10; // to position the coin in the middle
+        int h2 = h/10;
+        for(Coin coin : coins){
+            int x = (int)(coin.getX() * widthRatio);
+            int y = (int)(coin.getY() * heightRatio);
+            coin.setNewData(x, y, w-w2*2, h-h2*2);
         }
     }
 
     private void boardCircleSetup(Graphics g) {
+        int w = Board.width / 7;
+        int h = Board.height / 6;
+        int w2 = w/10; // to position the coin in the middle
+        int h2 = h/10;
         Color circles = new Color(92, 92, 92);
         g.setColor(circles);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         for(int i = 0; i<7; i++){
             for(int j = 0; j<6; j++){
-                g.drawOval(i*100+10, j*100+10, 80, 80);
-                g.fillOval(i*100+10, j*100+10, 80, 80);
+                g.drawOval(i*w+w2, j*h+h2, w-w2*2, h-h2*2);
+                g.fillOval(i*w+w2, j*h+h2, w-w2*2, h-h2*2);
             }
         }
     }

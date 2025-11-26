@@ -1,9 +1,8 @@
 package core;
 
 import java.awt.Color;
-import java.io.Serializable;
 
-public class Game implements Serializable {
+public class Game {
     Color[][] board; // Default Connect-4 boards have 6 rows (x) & 7 columns (y)
     boolean won = false;
 

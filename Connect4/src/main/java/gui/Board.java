@@ -1,13 +1,18 @@
 package gui;
 
 import core.Game;
-import core.Turn;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.net.URL;
 
 public class Board {
+
+    static int width = 700;
+    static int oldWidth = 700;
+    static int height = 600;
+    static int oldHeight = 600;
 
     public static void main(String[] args) {
         JFrame window = new JFrame("Connect 4");
@@ -19,10 +24,19 @@ public class Board {
             System.err.println("⚠️ Icon not found: /gui/icon.png");
         }
         CoinPanel panel = new CoinPanel(new Game());
-        new Turn(panel);
         window.setContentPane(panel);
         panel.addMouseListener(new BoardClickListener(panel));
-        window.setSize(717,640);
+        window.setSize(710,635);
+        window.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                oldWidth = width;
+                oldHeight = height;
+                width = window.getWidth()-10;
+                height = window.getHeight()-35;
+                panel.recalcPos();
+                panel.repaint();
+            }
+        });
         window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
