@@ -14,12 +14,6 @@ public class BoardClickListener extends MouseAdapter {
     }
 
     public void mouseClicked(MouseEvent e) {
-        if(!panel.game.getWon() && panel.game.isBoardFull(panel.game.getBoard())) { Board.showEndScreen("Draw!"); }
-        if(panel.game.getWon()){
-            String winner = (panel.getTurn() % 2 == 0) ? "Yellow" : "Red";
-            Board.showEndScreen(winner + "won!");
-        }
-
         if(panel.getAI() != null){
             if(panel.game.isAIThinking()) { return; }
 
@@ -48,6 +42,12 @@ public class BoardClickListener extends MouseAdapter {
                     panel.applyMove(x, y);
                 }
             }
+        }
+        if(!panel.game.getWon() && panel.game.isBoardFull(panel.game.getBoard())) { Board.endScreenDelay("Draw!"); }
+        if(panel.game.getWon()){
+
+            String winner = (panel.getTurn() % 2 == 0) ? "Yellow" : "Red";
+            Board.endScreenDelay(winner + " won!");
         }
     }
 

@@ -1,12 +1,18 @@
 package gui;
 
+import com.google.gson.Gson;
 import core.Game;
+import core.GameState;
+import core.SaveSystem;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class Board {
 
@@ -16,14 +22,10 @@ public class Board {
     private static JPanel mainPanel;
     private static CoinPanel currentGamePanel;
     private static String current;
+    private static JPanel endScreen;
+    private static final java.util.ArrayList<String> thisSession = new ArrayList<>();
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAllGUIs();
-            }
-        });
-    }
+    public static void main(String[] args) { SwingUtilities.invokeLater(Board::createAllGUIs); }
 
     private static void createAllGUIs() {
         JFrame window = new JFrame("Connect 4");
@@ -39,7 +41,7 @@ public class Board {
         mainPanel = new JPanel(cardLayout);
 
         JPanel startScreen = createStartScreen();
-        JPanel endScreen = createEndScreen();
+        endScreen = createEndScreen();
 
         currentGamePanel = createGamePanel("");
 
@@ -61,11 +63,42 @@ public class Board {
             }
         });
 
+        window.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                saveProgress();
+            }
+
+            public void windowClosed(WindowEvent e) {
+                saveProgress();
+            }
+        });
+
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
         showStartScreen();
+    }
+
+    private static void saveProgress(){
+        if(!currentGamePanel.game.getWon() && !currentGamePanel.game.isBoardFull(currentGamePanel.game.getBoard())){
+            GameState state = new GameState(currentGamePanel.getGame(), current, currentGamePanel.getTurn(), currentGamePanel.getCoins());
+            SaveSystem.saveGame(state, current);
+            thisSession.remove(current);
+        }
+        for(String mode : thisSession){
+            SaveSystem.deleteSavedGame(mode);
+        }
+        thisSession.clear();
+    }
+
+    private static GameState loadProgress(String filename){
+        try{
+            return SaveSystem.loadGame(filename);
+        } catch(Exception e){
+            System.err.println("Could not load game from: " + filename + " mode");
+        }
+        return null;
     }
 
     private static JPanel createStartScreen() {
@@ -141,7 +174,6 @@ public class Board {
         button.setBackground(new Color(35,76,106));
         button.setForeground(new Color(227, 227, 227));
         button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         return button;
     }
 
@@ -156,19 +188,32 @@ public class Board {
         }
     }
 
+    public static void endScreenDelay(String winnerMessage){
+        Timer timer = new Timer(3250, e -> showEndScreen(winnerMessage));
+        timer.setRepeats(false);
+        timer.start();
+    }
+
     public static void showEndScreen(String winnerMessage){
-        JPanel endScreen = (JPanel) mainPanel.getComponent(2);
         JLabel result = (JLabel) endScreen.getClientProperty("results");
         if(result != null) { result.setText(winnerMessage); }
         cardLayout.show(mainPanel, "END");
     }
 
     private static void startGame(String gameMode) {
+        if(!thisSession.contains(gameMode)) {
+            thisSession.add(gameMode);
+        }
+
         current = gameMode;
         mainPanel.remove(currentGamePanel);
         currentGamePanel = createGamePanel(gameMode);
         mainPanel.add(currentGamePanel, "GAME");
         currentGamePanel.resetGame();
+        GameState loadedState = loadProgress(gameMode);
+        if(loadedState != null){
+            currentGamePanel.loadFromState(loadedState);
+        }
         showGameScreen();
         mainPanel.revalidate();
         mainPanel.repaint();

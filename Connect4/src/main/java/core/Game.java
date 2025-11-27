@@ -22,16 +22,6 @@ public class Game {
         return board;
     }
 
-    public void restartGame() {
-        board = new Color[7][6];
-        for (int x = 0; x < 7; ++x) {
-            for (int y = 0; y < 6; ++y) {
-                board[x][y] = Color.BLACK;
-            }
-        }
-        won = false;
-    }
-
     public int getCurrentY(Color[][] board, int x) {
         for (int y = 0; y <= 5; ++y) {
             if (board[x][y].equals(Color.BLACK)) {
@@ -41,6 +31,12 @@ public class Game {
         return -1;
     }
 
+    public void loadPreviousGame(GameState state){
+        this.board = state.getBoard();
+        this.currentPlayer = state.getCurrentPlayer();
+        this.won = state.isGameWon(); // Altho it can't be true
+    }
+
     public boolean isColumnAvailable(Color[][] board, int col) {
         return board[col][5] == Color.BLACK;
     }
@@ -48,13 +44,6 @@ public class Game {
     public boolean isBoardFull(Color[][] board) {
         for (int col = 0; col < 7; ++col) {
             if (isColumnAvailable(board, col)) return false;
-        }
-        return true;
-    }
-
-    public boolean isBoardEmpty(Color[][] board) {
-        for (int col = 0; col < 7; ++col) {
-            if(board[col][0] != Color.BLACK) return false;
         }
         return true;
     }
@@ -126,8 +115,6 @@ public class Game {
         return count >= 4; // LE eredményét ellenőrzi, mivel az már nem lép bele a shufflebe
     }
 }
-
-
 /*
         [0,0][0,1][0,2][0,3][0,4][0,5]
         [1,0][1,1][1,2][1,3][1,4][1,5]

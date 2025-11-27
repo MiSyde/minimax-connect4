@@ -28,6 +28,15 @@ public abstract class Coin {
         return y;
     }
 
+    public int getColumn() {
+        return column;
+    }
+    public int getRow() {
+        return row;
+    }
+
+    public abstract Color getColor();
+
     public int getHeight() { return height; }
 
     public int getWidth() { return width; }
@@ -48,6 +57,8 @@ public abstract class Coin {
             super(x, y, height, width, column, row);
         }
 
+        public Color getColor() { return Color.RED; }
+
         public void draw(Graphics g){
             g.setColor(Color.RED);
             g.fillOval(super.getX(), super.getY(), super.getWidth(), super.getHeight());
@@ -59,6 +70,11 @@ public abstract class Coin {
 
         public YellowCoin(int x, int y, int height, int width, int column, int row) {
             super(x, y, height, width, column, row);
+        }
+
+        @Override
+        public Color getColor() {
+            return Color.YELLOW;
         }
 
         public void draw(Graphics g){

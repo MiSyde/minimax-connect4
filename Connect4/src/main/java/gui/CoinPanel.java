@@ -2,8 +2,10 @@ package gui;
 
 import core.AI;
 import core.Game;
+import core.GameState;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JPanel;
@@ -12,7 +14,7 @@ public class CoinPanel extends JPanel {
 
     Game game;
     private final List<Coin> coins = new LinkedList<>();
-    private int turn; // <- !! can't stay 0 if we use a loaded game
+    private int turn;
     private AI ai = null;
 
     public void addCoin(Coin coin) {
@@ -45,6 +47,8 @@ public class CoinPanel extends JPanel {
         }
     }
 
+    public Game getGame() { return game; }
+
     public void triggerAIMove() {
         if (game.getWon() || game.getCurrentPlayer() != Color.YELLOW || game.isAIThinking()) {
             return;
@@ -64,6 +68,8 @@ public class CoinPanel extends JPanel {
         }
     }
 
+    public java.util.List<Coin> getCoins() { return new ArrayList<>(coins); }
+
     public void applyMove(int x, int y) {
         int cellWidth = Board.width / 7;
         int cellHeight = Board.height / 6;
@@ -76,10 +82,6 @@ public class CoinPanel extends JPanel {
 
 
     public int getTurn() { return turn; }
-
-    public void setTurn(int turn) { this.turn = turn; }
-
-    public List<Coin> getCoins() { return coins; }
 
     private void boardLineSetup(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
@@ -99,6 +101,15 @@ public class CoinPanel extends JPanel {
         }
     }
 
+    public void loadFromState(GameState state) {
+        this.coins.clear();
+        this.coins.addAll(state.getCoins());
+        this.turn = state.getTurn();
+        this.game.loadPreviousGame(state);
+        recalcPos();
+        repaint();
+    }
+
     public void recalcPos(){
         int cellWidth = Board.width / 7;
         int cellHight = Board.height / 6;
@@ -113,8 +124,8 @@ public class CoinPanel extends JPanel {
     private void boardCircleSetup(Graphics g) {
         int w = Board.width / 7;
         int h = Board.height / 6;
-        int w2 = w/10; // to position the coin in the middle
-        int h2 = h/10;
+        int w2 = w / 10; // to position the coin in the middle
+        int h2 = h / 10;
         Color circles = new Color(92, 92, 92);
         g.setColor(circles);
         Graphics2D g2d = (Graphics2D) g;
