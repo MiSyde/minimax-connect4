@@ -85,9 +85,17 @@ public class Board {
             GameState state = new GameState(currentGamePanel.getGame(), current, currentGamePanel.getTurn(), currentGamePanel.getCoins());
             SaveSystem.saveGame(state, current);
             thisSession.remove(current);
+            System.out.println("✓ Saved incomplete game: " + current);
+        }
+        else{
+            SaveSystem.deleteSavedGame(current);
+            System.out.println("✓ Deleted completed game: " + current);
         }
         for(String mode : thisSession){
-            SaveSystem.deleteSavedGame(mode);
+            if(!mode.equals(current)){
+                SaveSystem.deleteSavedGame(mode);
+                System.out.println("✓ Deleted other session game: " + mode);
+            }
         }
         thisSession.clear();
     }
@@ -108,7 +116,7 @@ public class Board {
         JLabel title = new JLabel("Connect 4");
         title.setFont(new Font("Arial", Font.BOLD, 40));
         title.setForeground(new Color(227, 227, 227));
-        title.setBorder(BorderFactory.createEmptyBorder(50, 0, 50, 0));
+        title.setBorder(BorderFactory.createEmptyBorder(50, 240, 50, 240));
 
         JPanel modePanel = new JPanel(new GridLayout(2, 1, 10, 20));
         modePanel.setBackground(new Color(27,60,83));
@@ -213,6 +221,7 @@ public class Board {
         GameState loadedState = loadProgress(gameMode);
         if(loadedState != null){
             currentGamePanel.loadFromState(loadedState);
+            System.out.println("✓ Loaded existing game - Turn: " + loadedState.getTurn());
         }
         showGameScreen();
         mainPanel.revalidate();

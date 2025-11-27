@@ -21,9 +21,11 @@ public class AI {
 
                 temp[currentCol][row] = color;
 
-                if (checkWin(temp, currentCol, row, color)) {
+                if (checkWin(temp, color)) {
                     return currentCol;
                 }
+
+                if(checkWin(temp, Color.RED)) { return currentCol; }
 
                 int score = minimax(temp, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
 
@@ -38,8 +40,10 @@ public class AI {
 
     private int minimax(Color[][] board, int depth, int alpha, int beta, boolean maximizing) {
         Color winner = getWinner(board);
-        if (winner == color) return 1000000 + depth;
-        if (winner == Color.RED) return -1000000 - depth;
+        if(winner != null) {
+            if (game.isColorEqual(winner, color)) return 1000000 + depth;
+            if (game.isColorEqual(winner, Color.RED)) return -1000000 - depth;
+        }
         if (game.isBoardFull(board)) return 0;
         if (depth == 0) return evaluateBoard(board);
 
@@ -74,33 +78,33 @@ public class AI {
         for (int col = 0; col < 7; col++) {
             for (int row = 0; row < 6; row++) {
                 Color player = board[col][row];
-                if (player == Color.BLACK) continue;
+                if (game.isBlack(player)) continue;
 
                 if (col <= 3 &&
-                        player == board[col+1][row] &&
-                        player == board[col+2][row] &&
-                        player == board[col+3][row]) {
+                        game.isColorEqual(player, board[col+1][row]) &&
+                        game.isColorEqual(player, board[col+2][row]) &&
+                        game.isColorEqual(player, board[col+3][row])) {
                     return player;
                 }
 
                 if (row <= 2 &&
-                        player == board[col][row+1] &&
-                        player == board[col][row+2] &&
-                        player == board[col][row+3]) {
+                        game.isColorEqual(player, board[col][row+1]) &&
+                        game.isColorEqual(player, board[col][row+2]) &&
+                        game.isColorEqual(player, board[col][row+3])) {
                     return player;
                 }
 
                 if (col <= 3 && row <= 2 &&
-                        player == board[col+1][row+1] &&
-                        player == board[col+2][row+2] &&
-                        player == board[col+3][row+3]) {
+                        game.isColorEqual(player, board[col+1][row+1]) &&
+                        game.isColorEqual(player, board[col+2][row+2]) &&
+                        game.isColorEqual(player, board[col+3][row+3])) {
                     return player;
                 }
 
                 if (col <= 3 && row >= 3 &&
-                        player == board[col+1][row-1] &&
-                        player == board[col+2][row-2] &&
-                        player == board[col+3][row-3]) {
+                        game.isColorEqual(player, board[col+1][row-1]) &&
+                        game.isColorEqual(player, board[col+2][row-2]) &&
+                        game.isColorEqual(player, board[col+3][row-3])) {
                     return player;
                 }
             }
@@ -108,14 +112,17 @@ public class AI {
         return null;
     }
 
-    private boolean checkWin(Color[][] board, int col, int row, Color player) { return getWinner(board) == player; }
+    private boolean checkWin(Color[][] board, Color player) {
+        Color winner = getWinner(board);
+        return winner != null && game.isColorEqual(winner, player);
+    }
 
     private int evaluateBoard(Color[][] board) {
         int score = 0;
 
         for (int row = 0; row < 6; row++) {
-            if (board[3][row] == color) score += 3;
-            else if (board[3][row] == Color.RED) score -= 3;
+            if (game.isColorEqual(board[3][row], color)) score += 3;
+            else if (game.isColorEqual(board[3][row], Color.RED)) score -= 3;
         }
 
         score += evaluateLines(board, color);
@@ -159,10 +166,13 @@ public class AI {
         for (int i = 0; i < 4; i++) {
             int currentCol = col + (i * dCol);
             int currentRow = row + (i * dRow);
+
+            if(currentCol < 0 || currentCol > 6 || currentRow < 0 || currentRow > 5) { break; }
+
             Color cell = board[currentCol][currentRow];
 
-            if (cell.equals(player)) ++playerCount;
-            else if (cell.equals(Color.BLACK)) ++emptyCount;
+            if(game.isColorEqual(cell, player)) ++playerCount;
+            else if(game.isBlack(cell)) ++emptyCount;
             else ++opponentCount;
         }
 

@@ -50,7 +50,7 @@ public class CoinPanel extends JPanel {
     public Game getGame() { return game; }
 
     public void triggerAIMove() {
-        if (game.getWon() || game.getCurrentPlayer() != Color.YELLOW || game.isAIThinking()) {
+        if (game.getWon() || !game.isYellow(game.getCurrentPlayer()) || game.isAIThinking()) {
             return;
         }
 

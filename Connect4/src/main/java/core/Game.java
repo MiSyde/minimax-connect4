@@ -24,21 +24,39 @@ public class Game {
 
     public int getCurrentY(Color[][] board, int x) {
         for (int y = 0; y <= 5; ++y) {
-            if (board[x][y].equals(Color.BLACK)) {
+            if (isBlack(board[x][y])) {
                 return y;
             }
         }
         return -1;
     }
 
+    public boolean isColorEqual(Color boardColor, Color player){
+        return boardColor != null && player != null && boardColor.getRGB() == player.getRGB();
+    }
+
+    public boolean isBlack(Color color){
+        return color != null && color.getRGB() == Color.BLACK.getRGB();
+    }
+
+    public boolean isRed(Color color){
+        return color != null && color.getRGB() == Color.RED.getRGB();
+    }
+
+    public boolean isYellow(Color color){
+        return color != null && color.getRGB() == Color.YELLOW.getRGB();
+    }
+
     public void loadPreviousGame(GameState state){
         this.board = state.getBoard();
         this.currentPlayer = state.getCurrentPlayer();
         this.won = state.isGameWon(); // Altho it can't be true
+        this.aiThinking = false;
+        System.out.println("✓ Loaded game - Current player: " + currentPlayer + ", AI thinking: " + aiThinking);
     }
 
     public boolean isColumnAvailable(Color[][] board, int col) {
-        return board[col][5] == Color.BLACK;
+        return isBlack(board[col][5]);
     }
 
     public boolean isBoardFull(Color[][] board) {
@@ -57,7 +75,7 @@ public class Game {
     }
 
     public void switchPlayer() {
-        currentPlayer = (currentPlayer == Color.RED) ? Color.YELLOW : Color.RED;
+        currentPlayer = (isRed(currentPlayer)) ? Color.YELLOW : Color.RED;
     }
 
     public boolean isAIThinking() {
@@ -106,7 +124,7 @@ public class Game {
                 if (currentX >= 7 || currentY >= 6) {
                     break;
                 }
-                if (board[currentX][currentY].equals(player)) {
+                if (isColorEqual(board[currentX][currentY], player)) {
                     ++count;
                 }
             }
