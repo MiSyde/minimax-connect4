@@ -14,7 +14,7 @@ public class Board {
     static int height = 600;
     private static CardLayout cardLayout;
     private static JPanel mainPanel;
-    private static CoinPanel coinPanel;
+    private static CoinPanel currentGamePanel;
     private static String current;
 
     public static void main(String[] args) {
@@ -34,14 +34,17 @@ public class Board {
         } else{
             System.err.println("⚠️ Icon not found: /gui/icon.png");
         }
+
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
+
         JPanel startScreen = createStartScreen();
-        coinPanel = createGameScreen();
         JPanel endScreen = createEndScreen();
 
+        currentGamePanel = createGamePanel("");
+
         mainPanel.add(startScreen, "START");
-        mainPanel.add(coinPanel, "GAME");
+        mainPanel.add(currentGamePanel, "GAME");
         mainPanel.add(endScreen, "END");
 
         window.setContentPane(mainPanel);
@@ -51,12 +54,13 @@ public class Board {
             public void componentResized(ComponentEvent e) {
                 width = window.getWidth()-10;
                 height = window.getHeight()-35;
-                if (coinPanel != null) {
-                    coinPanel.recalcPos();
-                    coinPanel.repaint();
+                if (currentGamePanel != null) {
+                    currentGamePanel.recalcPos();
+                    currentGamePanel.repaint();
                 }
             }
         });
+
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setLocationRelativeTo(null);
         window.setVisible(true);
@@ -73,7 +77,7 @@ public class Board {
         title.setForeground(new Color(227, 227, 227));
         title.setBorder(BorderFactory.createEmptyBorder(50, 0, 50, 0));
 
-        JPanel modePanel = new JPanel(new GridLayout(2, 1));
+        JPanel modePanel = new JPanel(new GridLayout(2, 1, 10, 20));
         modePanel.setBackground(new Color(27,60,83));
         modePanel.setBorder(BorderFactory.createEmptyBorder(0, 100, 100, 100));
 
@@ -92,13 +96,12 @@ public class Board {
         return startPanel;
     }
 
-    private static CoinPanel createGameScreen() {
+    private static CoinPanel createGamePanel(String mode) {
         Game game = new Game();
-
-        CoinPanel coinPanel = new CoinPanel(game);
-        coinPanel.addMouseListener(new BoardClickListener(coinPanel));
-
-        return coinPanel;
+        boolean ai = "PVE".equals(mode);
+        CoinPanel panel = new CoinPanel(game, ai);
+        panel.addMouseListener(new BoardClickListener(panel));
+        return panel;
     }
 
     private static JPanel createEndScreen() {
@@ -138,6 +141,7 @@ public class Board {
         button.setBackground(new Color(35,76,106));
         button.setForeground(new Color(227, 227, 227));
         button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         return button;
     }
 
@@ -146,10 +150,9 @@ public class Board {
     }
 
     public static void showGameScreen() {
-        reset();
         cardLayout.show(mainPanel, "GAME");
-        if(coinPanel != null) {
-            coinPanel.requestFocusInWindow();
+        if(currentGamePanel != null) {
+            currentGamePanel.requestFocusInWindow();
         }
     }
 
@@ -162,26 +165,16 @@ public class Board {
 
     private static void startGame(String gameMode) {
         current = gameMode;
-        if(gameMode.equals("PVP")) {
-            showGameScreen();
-        } else {
-
-        }
+        mainPanel.remove(currentGamePanel);
+        currentGamePanel = createGamePanel(gameMode);
+        mainPanel.add(currentGamePanel, "GAME");
+        currentGamePanel.resetGame();
+        showGameScreen();
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 
     private static void restartGame() {
-        if(current.equals("PVP")){
-            showGameScreen();
-        } else {
-
-        }
-
+        startGame(current);
     }
-
-    private static void reset(){
-        coinPanel.getCoins().clear();
-        coinPanel.setTurn(0);
-        coinPanel.game.restartGame();
-    }
-
 }

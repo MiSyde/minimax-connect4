@@ -4,7 +4,194 @@ import java.awt.*;
 
 public class AI {
     Color color = Color.YELLOW;
+    private final Game game;
 
+    public AI(Game game) { this.game = game; }
 
+    public int getBestMove(Color[][] board, int depth) {
+        int bestScore = Integer.MIN_VALUE;
+        int bestCol = 3;
 
+        for (int currentCol = 0; currentCol < 7; ++currentCol) {
+            if (game.isColumnAvailable(board, currentCol)) {
+                Color[][] temp = copyBoard(board);
+                int row = game.getCurrentY(temp, currentCol);
+
+                if (row == -1) continue;
+
+                temp[currentCol][row] = color;
+
+                if (checkWin(temp, currentCol, row, color)) {
+                    return currentCol;
+                }
+
+                int score = minimax(temp, depth - 1, Integer.MIN_VALUE, Integer.MAX_VALUE, false);
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestCol = currentCol;
+                }
+            }
+        }
+        return bestCol;
+    }
+
+    private int minimax(Color[][] board, int depth, int alpha, int beta, boolean maximizing) {
+        Color winner = getWinner(board);
+        if (winner == color) return 1000000 + depth;
+        if (winner == Color.RED) return -1000000 - depth;
+        if (game.isBoardFull(board)) return 0;
+        if (depth == 0) return evaluateBoard(board);
+
+        if (maximizing) {
+            int maxScore = Integer.MIN_VALUE;
+            for (int col = 0; col < 7; col++) {
+                if (game.isColumnAvailable(board, col)) {
+                    Color[][] newBoard = makeMove(board, col, color);
+                    int score = minimax(newBoard, depth - 1, alpha, beta, false);
+                    maxScore = Math.max(maxScore, score);
+                    alpha = Math.max(alpha, score);
+                    if (beta <= alpha) break;
+                }
+            }
+            return maxScore;
+        } else {
+            int minScore = Integer.MAX_VALUE;
+            for (int col = 0; col < 7; col++) {
+                if (game.isColumnAvailable(board, col)) {
+                    Color[][] newBoard = makeMove(board, col, Color.RED);
+                    int score = minimax(newBoard, depth - 1, alpha, beta, true);
+                    minScore = Math.min(minScore, score);
+                    beta = Math.min(beta, score);
+                    if (beta <= alpha) break;
+                }
+            }
+            return minScore;
+        }
+    }
+
+    private Color getWinner(Color[][] board) {
+        for (int col = 0; col < 7; col++) {
+            for (int row = 0; row < 6; row++) {
+                Color player = board[col][row];
+                if (player == Color.BLACK) continue;
+
+                if (col <= 3 &&
+                        player == board[col+1][row] &&
+                        player == board[col+2][row] &&
+                        player == board[col+3][row]) {
+                    return player;
+                }
+
+                if (row <= 2 &&
+                        player == board[col][row+1] &&
+                        player == board[col][row+2] &&
+                        player == board[col][row+3]) {
+                    return player;
+                }
+
+                if (col <= 3 && row <= 2 &&
+                        player == board[col+1][row+1] &&
+                        player == board[col+2][row+2] &&
+                        player == board[col+3][row+3]) {
+                    return player;
+                }
+
+                if (col <= 3 && row >= 3 &&
+                        player == board[col+1][row-1] &&
+                        player == board[col+2][row-2] &&
+                        player == board[col+3][row-3]) {
+                    return player;
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean checkWin(Color[][] board, int col, int row, Color player) { return getWinner(board) == player; }
+
+    private int evaluateBoard(Color[][] board) {
+        int score = 0;
+
+        for (int row = 0; row < 6; row++) {
+            if (board[3][row] == color) score += 3;
+            else if (board[3][row] == Color.RED) score -= 3;
+        }
+
+        score += evaluateLines(board, color);
+        score -= evaluateLines(board, Color.RED);
+
+        return score;
+    }
+
+    private int evaluateLines(Color[][] board, Color player) {
+        int score = 0;
+
+        for (int col = 0; col < 7; col++) {
+            for (int row = 0; row < 6; row++) {
+                // Horizontal
+                if (col <= 3) {
+                    score += evaluateWindow(board, col, row, 1, 0, player);
+                }
+                // Vertical
+                if (row <= 2) {
+                    score += evaluateWindow(board, col, row, 0, 1, player);
+                }
+                // Up-right
+                if (col <= 3 && row <= 2) {
+                    score += evaluateWindow(board, col, row, 1, 1, player);
+                }
+                // Down-right
+                if (col <= 3 && row >= 3) {
+                    score += evaluateWindow(board, col, row, 1, -1, player);
+                }
+            }
+        }
+        return score;
+    }
+
+    private int evaluateWindow(Color[][] board, int col, int row, int dCol, int dRow, Color player) {
+        int score = 0;
+        int playerCount = 0;
+        int emptyCount = 0;
+        int opponentCount = 0;
+
+        for (int i = 0; i < 4; i++) {
+            int currentCol = col + (i * dCol);
+            int currentRow = row + (i * dRow);
+            Color cell = board[currentCol][currentRow];
+
+            if (cell.equals(player)) ++playerCount;
+            else if (cell.equals(Color.BLACK)) ++emptyCount;
+            else ++opponentCount;
+        }
+
+        // Scoring
+        if (playerCount == 4) score += 100;
+        else if (playerCount == 3 && emptyCount == 1) score += 50; // 3 in a row
+        else if (playerCount == 2 && emptyCount == 2) score += 10; // 2 in a row
+        else if (playerCount == 1 && emptyCount == 3) score += 1;  // 1 in a row
+
+        // Block opponent
+        if (opponentCount == 3 && emptyCount == 1) score += 40;
+
+        return score;
+    }
+
+    private Color[][] makeMove(Color[][] board, int col, Color player) {
+        Color[][] newBoard = copyBoard(board);
+        int row = game.getCurrentY(newBoard, col);
+        if (row != -1) {
+            newBoard[col][row] = player;
+        }
+        return newBoard;
+    }
+
+    private Color[][] copyBoard(Color[][] board) {
+        Color[][] newBoard = new Color[7][6];
+        for (int i = 0; i < 7; i++) {
+            System.arraycopy(board[i], 0, newBoard[i], 0, 6);
+        }
+        return newBoard;
+    }
 }

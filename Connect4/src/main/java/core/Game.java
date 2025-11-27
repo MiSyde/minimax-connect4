@@ -5,6 +5,8 @@ import java.awt.Color;
 public class Game {
     Color[][] board; // Default Connect-4 boards have 6 rows (x) & 7 columns (y)
     boolean won;
+    private Color currentPlayer = Color.RED;
+    private boolean aiThinking = false;
 
     public Game() {
         board = new Color[7][6];
@@ -16,6 +18,10 @@ public class Game {
         won = false;
     }
 
+    public Color[][] getBoard() {
+        return board;
+    }
+
     public void restartGame() {
         board = new Color[7][6];
         for (int x = 0; x < 7; ++x) {
@@ -23,10 +29,10 @@ public class Game {
                 board[x][y] = Color.BLACK;
             }
         }
-         won = false;
+        won = false;
     }
 
-    public int getCurrentY(int x) {
+    public int getCurrentY(Color[][] board, int x) {
         for (int y = 0; y <= 5; ++y) {
             if (board[x][y].equals(Color.BLACK)) {
                 return y;
@@ -35,8 +41,42 @@ public class Game {
         return -1;
     }
 
+    public boolean isColumnAvailable(Color[][] board, int col) {
+        return board[col][5] == Color.BLACK;
+    }
+
+    public boolean isBoardFull(Color[][] board) {
+        for (int col = 0; col < 7; ++col) {
+            if (isColumnAvailable(board, col)) return false;
+        }
+        return true;
+    }
+
+    public boolean isBoardEmpty(Color[][] board) {
+        for (int col = 0; col < 7; ++col) {
+            if(board[col][0] != Color.BLACK) return false;
+        }
+        return true;
+    }
+
     public boolean getWon() {
         return won;
+    }
+
+    public Color getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void switchPlayer() {
+        currentPlayer = (currentPlayer == Color.RED) ? Color.YELLOW : Color.RED;
+    }
+
+    public boolean isAIThinking() {
+        return aiThinking;
+    }
+
+    public void setAIThinking(boolean thinking) {
+        aiThinking = thinking;
     }
 
     public void addToBoard(int x, int y, Color color) {
@@ -44,6 +84,8 @@ public class Game {
         won = checkWinStat(x, y, color);
         if (won) {
             System.out.println("Won");
+        } else {
+            switchPlayer();
         }
     }
 
@@ -72,7 +114,9 @@ public class Game {
                         break;
                     }
                 }
-                if(currentX >= 7 || currentY >= 6) { break; }
+                if (currentX >= 7 || currentY >= 6) {
+                    break;
+                }
                 if (board[currentX][currentY].equals(player)) {
                     ++count;
                 }
@@ -81,8 +125,9 @@ public class Game {
         }
         return count >= 4; // LE eredményét ellenőrzi, mivel az már nem lép bele a shufflebe
     }
-
 }
+
+
 /*
         [0,0][0,1][0,2][0,3][0,4][0,5]
         [1,0][1,1][1,2][1,3][1,4][1,5]

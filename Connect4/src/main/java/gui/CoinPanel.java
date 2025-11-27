@@ -1,5 +1,6 @@
 package gui;
 
+import core.AI;
 import core.Game;
 
 import java.awt.*;
@@ -12,16 +13,67 @@ public class CoinPanel extends JPanel {
     Game game;
     private final List<Coin> coins = new LinkedList<>();
     private int turn; // <- !! can't stay 0 if we use a loaded game
+    private AI ai = null;
+
     public void addCoin(Coin coin) {
         coins.add(coin);
         ++turn;
         this.repaint();
     }
 
-    CoinPanel(Game game) {
+    public AI getAI() { return ai; }
+
+    CoinPanel(Game game, boolean ai) {
         super();
         this.game = game;
+        if(ai){
+            this.ai = new AI(game);
+        } else {
+            this.ai = null;
+        }
+
     }
+
+    public void resetGame(){
+        this.game = new Game();
+        coins.clear();
+        turn = 0;
+        recalcPos();
+        repaint();
+        if(ai != null){
+            ai = new AI(game);
+        }
+    }
+
+    public void triggerAIMove() {
+        if (game.getWon() || game.getCurrentPlayer() != Color.YELLOW || game.isAIThinking()) {
+            return;
+        }
+
+        game.setAIThinking(true);
+
+        try {
+            int bestColumn = ai.getBestMove(game.getBoard(), 6);
+
+            int y = game.getCurrentY(game.getBoard(), bestColumn);
+            if (y != -1) {
+                applyMove(bestColumn, y);
+            }
+        } finally {
+            game.setAIThinking(false);
+        }
+    }
+
+    public void applyMove(int x, int y) {
+        int cellWidth = Board.width / 7;
+        int cellHeight = Board.height / 6;
+        int pauseWidth = cellWidth / 10;
+        int pauseHeight = cellHeight / 10;
+
+        game.addToBoard(x, y, Color.YELLOW);
+        addCoin(new Coin.YellowCoin(x * cellWidth + pauseWidth, (5 - y) * cellHeight + pauseHeight, cellHeight - pauseHeight * 2, cellWidth - pauseWidth * 2, x, y));
+    }
+
 
     public int getTurn() { return turn; }
 
@@ -87,9 +139,6 @@ public class CoinPanel extends JPanel {
         boardLineSetup(g);
         for(Coin coin : coins){
             coin.draw(g);
-        }
-        if(game.getWon()){
-
         }
     }
 }
