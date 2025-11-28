@@ -1,0 +1,141 @@
+package core;
+
+import java.awt.Color;
+
+public class Game {
+    Color[][] board;
+    boolean won;
+    private Color currentPlayer = Color.RED;
+    private boolean aiThinking = false;
+
+    public Game() {
+        board = new Color[7][6];
+        for (int x = 0; x < 7; ++x) {
+            for (int y = 0; y < 6; ++y) {
+                board[x][y] = Color.BLACK;
+            }
+        }
+        won = false;
+    }
+
+    public Color[][] getBoard() {
+        return board;
+    }
+
+    public int getCurrentY(Color[][] board, int x) {
+        for (int y = 0; y <= 5; ++y) {
+            if (isBlack(board[x][y])) {
+                return y;
+            }
+        }
+        return -1;
+    }
+
+    public boolean isColorEqual(Color boardColor, Color player){
+        return boardColor != null && player != null && boardColor.getRGB() == player.getRGB();
+    }
+
+    public boolean isBlack(Color color){
+        return color != null && color.getRGB() == Color.BLACK.getRGB();
+    }
+
+    public boolean isRed(Color color){
+        return color != null && color.getRGB() == Color.RED.getRGB();
+    }
+
+    public boolean isYellow(Color color){
+        return color != null && color.getRGB() == Color.YELLOW.getRGB();
+    }
+
+    public void loadPreviousGame(GameState state){
+        this.board = state.getBoard();
+        this.currentPlayer = state.getCurrentPlayer();
+        this.won = state.isGameWon(); // Altho it can't be true
+        this.aiThinking = false;
+    }
+
+    public boolean isColumnAvailable(Color[][] board, int col) {
+        return isBlack(board[col][5]);
+    }
+
+    public boolean isBoardFull(Color[][] board) {
+        for (int col = 0; col < 7; ++col) {
+            if (isColumnAvailable(board, col)) return false;
+        }
+        return true;
+    }
+
+    public boolean getWon() {
+        return won;
+    }
+
+    public Color getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void switchPlayer() {
+        currentPlayer = (isRed(currentPlayer)) ? Color.YELLOW : Color.RED;
+    }
+
+    public boolean isAIThinking() {
+        return aiThinking;
+    }
+
+    public void setAIThinking(boolean thinking) {
+        aiThinking = thinking;
+    }
+
+    public void addToBoard(int x, int y, Color color) {
+        board[x][y] = color;
+        won = checkWinStat(x, y, color);
+        if (!won) {
+            switchPlayer();
+        }
+    }
+
+    public boolean checkWinStat(int x, int y, Color player) {
+        int count = 0;
+        int shuffle = 0;
+        int[][] directions = {{1, 0}, {-1, 0}, {1, -1}, {-1, 1}, {-1, -1}, {1, 1}, {0, -1}}; // jobbra, balra, jobbra-le, balra-fel, balra-le, jobbra-fel, le
+        for (int[] direction : directions) {
+            if (shuffle == 2) {
+                if (count - 1 >= 4) return true;
+                count = 0;
+                shuffle = 0;
+            }
+            int directionX = direction[0];
+            int directionY = direction[1];
+            for (int i = 0; i < 4; ++i) {
+                int currentX = x + directionX * i;
+                int currentY = y + directionY * i;
+                if (directionX < 0) {
+                    if (currentX < 0) {
+                        break;
+                    }
+                }
+                if (directionY < 0) {
+                    if (currentY < 0) {
+                        break;
+                    }
+                }
+                if (currentX >= 7 || currentY >= 6) {
+                    break;
+                }
+                if (isColorEqual(board[currentX][currentY], player)) {
+                    ++count;
+                }
+            }
+            ++shuffle;
+        }
+        return count >= 4; // LE eredményét ellenőrzi, mivel az már nem lép bele a shufflebe
+    }
+}
+/*
+        [0,0][0,1][0,2][0,3][0,4][0,5]
+        [1,0][1,1][1,2][1,3][1,4][1,5]
+        [2,0][2,1][2,2][2,3][2,4][2,5]
+        [3,0][3,1][3,2][3,3][3,4][3,5]
+        [4,0][4,1][4,2][4,3][4,4][4,5]
+        [5,0][5,1][5,2][5,3][5,4][5,5]
+        [6,0][6,1][6,2][6,3][6,4][6,5]
+*/
