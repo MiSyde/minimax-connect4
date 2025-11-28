@@ -25,7 +25,7 @@ public class CoinPanel extends JPanel {
 
     public AI getAI() { return ai; }
 
-    CoinPanel(Game game, boolean ai) {
+    public CoinPanel(Game game, boolean ai) {
         super();
         this.game = game;
         if(ai){

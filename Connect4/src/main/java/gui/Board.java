@@ -27,6 +27,13 @@ public class Board {
 
     public static void main(String[] args) { SwingUtilities.invokeLater(Board::createAllGUIs); }
 
+    /*
+    Creates the main frame, and it's panel with a cardlayout.
+    It adds all the windows to said cardlayout, so the program can switch between them later on.
+    Sets some of the frame's default settings, it's starting size, starting position, etc.
+    The program needs to know when the frame gets resized (for relative sizing and positioning) / closed (for saving),
+    therefore these listeners also get added to the frame.
+     */
     private static void createAllGUIs() {
         JFrame window = new JFrame("Connect 4");
         JFrame.setDefaultLookAndFeelDecorated(true);
@@ -83,7 +90,12 @@ public class Board {
         showStartScreen();
     }
 
-    private static void saveProgress(){
+    /*
+    If the hasn't ended but the program still exited, the function saves the board's current state and remove the
+    current mode's name from a list, which keeps track of the gamemodes that have been played this session, so that way
+    it won't delete that gamemode's savefile.
+     */
+    private static void saveProgress() {
         if(!currentGamePanel.game.getWon() && !currentGamePanel.game.isBoardFull(currentGamePanel.game.getBoard())){
             GameState state = new GameState(currentGamePanel.getGame(), current, currentGamePanel.getTurn(), currentGamePanel.getCoins());
             SaveSystem.saveGame(state, current);
@@ -100,6 +112,9 @@ public class Board {
         thisSession.clear();
     }
 
+    /*
+    If the saves directory contains a savefile for the given gamemode, it gets loaded.
+     */
     private static GameState loadProgress(String filename){
         try{
             return SaveSystem.loadGame(filename);
@@ -109,6 +124,9 @@ public class Board {
         return null;
     }
 
+    /*
+
+     */
     private static JPanel createStartScreen() {
         JPanel startPanel = new JPanel(new BorderLayout());
         startPanel.setBackground(new Color(27,60,83));
@@ -200,7 +218,7 @@ public class Board {
     }
 
     public static void endScreenDelay(String winnerMessage){
-        Timer timer = new Timer(3250, e -> showEndScreen(winnerMessage));
+        Timer timer = new Timer(2500, _ -> showEndScreen(winnerMessage));
         timer.setRepeats(false);
         timer.start();
     }

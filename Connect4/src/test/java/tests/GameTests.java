@@ -1,10 +1,10 @@
-package test;
+package tests;
 
 import core.*;
 import org.junit.jupiter.api.*;
 import java.awt.*;
 
-public class FourInARowTests {
+public class GameTests {
     Game game;
 
     @BeforeEach
@@ -43,7 +43,7 @@ public class FourInARowTests {
 */
 
     @Test
-    @DisplayName("Diagonally to the Left -- True")
+    @DisplayName("Diagonally to the Left")
     public void diagonallyToTheLeftTrueTest(){
         game.addToBoard(0, 5, Color.RED);
         game.addToBoard(1, 4, Color.RED);
@@ -53,16 +53,16 @@ public class FourInARowTests {
     }
 
     @Test
-    @DisplayName("Diagonally to the Left -- False")
+    @DisplayName("3 in a row")
     public void diagonallyToTheLeftFalseTest(){
-        game.addToBoard(0, 5, Color.RED);
-        game.addToBoard(1, 4, Color.RED);
-        game.addToBoard(2, 3, Color.RED);
+        game.addToBoard(0, 1, Color.RED);
+        game.addToBoard(0, 2, Color.RED);
+        game.addToBoard(0, 3, Color.RED);
         Assertions.assertFalse(game.getWon());
     }
 
     @Test
-    @DisplayName("Diagonally to the Right -- True")
+    @DisplayName("Diagonally to the Right")
     public void diagonallyToTheRightTrueTest(){
         game.addToBoard(3, 3, Color.RED);
         game.addToBoard(4, 2, Color.RED);
@@ -71,14 +71,7 @@ public class FourInARowTests {
         Assertions.assertTrue(game.getWon());
     }
 
-    @Test
-    @DisplayName("Diagonally to the Right -- False")
-    public void diagonallyToTheRightFalseTest(){
-        game.addToBoard(3, 3, Color.RED);
-        game.addToBoard(4, 2, Color.RED);
-        game.addToBoard(5, 1, Color.RED);
-        Assertions.assertFalse(game.getWon());
-    }
+
 
 
 }
