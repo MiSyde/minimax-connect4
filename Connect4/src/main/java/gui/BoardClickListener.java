@@ -15,11 +15,9 @@ public class BoardClickListener extends MouseAdapter {
 
     public void mouseClicked(MouseEvent e) {
         if(panel.getAI() != null){
-            if(panel.game.isAIThinking()) {
-                System.out.println("❌ Click blocked - AI is thinking");
-                return; }
+            if(panel.game.isAIThinking()) { return; }
 
-            if(!panel.game.isRed(panel.game.getCurrentPlayer())) { System.out.println("❌ Click blocked - Not player's turn" + panel.game.isRed(panel.game.getCurrentPlayer()) + panel.game.getCurrentPlayer()); return; }
+            if(!panel.game.isRed(panel.game.getCurrentPlayer())) { return; }
 
             int[] xAndY = posCalc(e);
             int x = xAndY[0];

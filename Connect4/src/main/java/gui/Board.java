@@ -48,6 +48,7 @@ public class Board {
         mainPanel.add(startScreen, "START");
         mainPanel.add(currentGamePanel, "GAME");
         mainPanel.add(endScreen, "END");
+        mainPanel.putClientProperty("window", window);
 
         window.setContentPane(mainPanel);
         window.setSize(710,635);
@@ -65,11 +66,13 @@ public class Board {
 
         window.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                saveProgress();
+                if(!thisSession.isEmpty()){
+                    saveProgress();
+                }
             }
 
             public void windowClosed(WindowEvent e) {
-                saveProgress();
+                windowClosing(e);
             }
         });
 
@@ -85,16 +88,13 @@ public class Board {
             GameState state = new GameState(currentGamePanel.getGame(), current, currentGamePanel.getTurn(), currentGamePanel.getCoins());
             SaveSystem.saveGame(state, current);
             thisSession.remove(current);
-            System.out.println("✓ Saved incomplete game: " + current);
         }
         else{
             SaveSystem.deleteSavedGame(current);
-            System.out.println("✓ Deleted completed game: " + current);
         }
         for(String mode : thisSession){
             if(!mode.equals(current)){
                 SaveSystem.deleteSavedGame(mode);
-                System.out.println("✓ Deleted other session game: " + mode);
             }
         }
         thisSession.clear();
@@ -104,7 +104,7 @@ public class Board {
         try{
             return SaveSystem.loadGame(filename);
         } catch(Exception e){
-            System.err.println("Could not load game from: " + filename + " mode");
+            System.err.println("Didn't find previous progress for: " + filename + " mode");
         }
         return null;
     }
@@ -162,7 +162,10 @@ public class Board {
 
         restartButton.addActionListener(_ -> restartGame());
         newGameButton.addActionListener(_ -> showStartScreen());
-        exitButton.addActionListener(_ -> System.exit(0));
+        exitButton.addActionListener(_ -> {
+            JFrame window = (JFrame) mainPanel.getClientProperty("window");
+            if(window != null) { window.dispose(); }
+        });
 
         buttonPanel.add(restartButton);
         buttonPanel.add(newGameButton);
@@ -221,7 +224,6 @@ public class Board {
         GameState loadedState = loadProgress(gameMode);
         if(loadedState != null){
             currentGamePanel.loadFromState(loadedState);
-            System.out.println("✓ Loaded existing game - Turn: " + loadedState.getTurn());
         }
         showGameScreen();
         mainPanel.revalidate();

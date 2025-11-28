@@ -3,7 +3,7 @@ package core;
 import java.awt.Color;
 
 public class Game {
-    Color[][] board; // Default Connect-4 boards have 6 rows (x) & 7 columns (y)
+    Color[][] board;
     boolean won;
     private Color currentPlayer = Color.RED;
     private boolean aiThinking = false;
@@ -52,7 +52,6 @@ public class Game {
         this.currentPlayer = state.getCurrentPlayer();
         this.won = state.isGameWon(); // Altho it can't be true
         this.aiThinking = false;
-        System.out.println("✓ Loaded game - Current player: " + currentPlayer + ", AI thinking: " + aiThinking);
     }
 
     public boolean isColumnAvailable(Color[][] board, int col) {
@@ -89,9 +88,7 @@ public class Game {
     public void addToBoard(int x, int y, Color color) {
         board[x][y] = color;
         won = checkWinStat(x, y, color);
-        if (won) {
-            System.out.println("Won");
-        } else {
+        if (!won) {
             switchPlayer();
         }
     }
