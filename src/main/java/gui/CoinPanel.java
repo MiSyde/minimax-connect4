@@ -10,6 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JPanel;
 
+/**
+ *
+ */
 public class CoinPanel extends JPanel {
 
     Game game;
@@ -17,6 +20,10 @@ public class CoinPanel extends JPanel {
     private int turn;
     private AI ai = null;
 
+    /**
+     *
+     * @param coin
+     */
     public void addCoin(Coin coin) {
         coins.add(coin);
         ++turn;

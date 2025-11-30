@@ -15,11 +15,12 @@ import java.nio.file.Paths;
 public class SaveSystem {
     private static final String saveDirection = "saves/";
     private static final Gson gson;
+
     static {
         gson = new GsonBuilder().registerTypeAdapter(Color.class, new ColorAdapter()).
                 registerTypeAdapter(Coin.class, new CoinAdapter()).setPrettyPrinting().create();
 
-        new File(saveDirection).mkdirs();
+        new File(saveDirection).mkdir();
     }
 
     public static void saveGame(GameState gameState, String fileName) {

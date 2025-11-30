@@ -8,6 +8,9 @@ public class Game {
     private Color currentPlayer = Color.RED;
     private boolean aiThinking = false;
 
+    /**
+     * Sets up the board with every cell being black, as a neutral color
+     */
     public Game() {
         board = new Color[7][6];
         for (int x = 0; x < 7; ++x) {
@@ -22,6 +25,12 @@ public class Game {
         return board;
     }
 
+    /**
+     *
+     * @param board The board in which the check happens
+     * @param x The given column
+     * @return The first available row of the column
+     */
     public int getCurrentY(Color[][] board, int x) {
         for (int y = 0; y <= 5; ++y) {
             if (isBlack(board[x][y])) {
@@ -47,6 +56,10 @@ public class Game {
         return color != null && color.getRGB() == Color.YELLOW.getRGB();
     }
 
+    /**
+     * Copying the fields of the argument
+     * @param state The state of the game that's being loaded
+     */
     public void loadPreviousGame(GameState state){
         this.board = state.getBoard();
         this.currentPlayer = state.getCurrentPlayer();
@@ -54,10 +67,21 @@ public class Game {
         this.aiThinking = false;
     }
 
+    /**
+     * @param board The board in which the check happens
+     * @param col The column in which the check happens
+     * @return True if last row of the column is black, otherwise false
+     */
     public boolean isColumnAvailable(Color[][] board, int col) {
         return isBlack(board[col][5]);
     }
 
+    /**
+     * Used for checking if the game is over by draw
+     * @param board The board in which the check happens
+     * @return True if all the columns' rows have a color that's not black, false otherwise
+     * @see Game#isColumnAvailable(Color[][], int)
+     */
     public boolean isBoardFull(Color[][] board) {
         for (int col = 0; col < 7; ++col) {
             if (isColumnAvailable(board, col)) return false;
@@ -85,6 +109,14 @@ public class Game {
         aiThinking = thinking;
     }
 
+    /**
+     * "Adds a coin to the board" and checks if that move won the game or not.
+     * If not, switches the current player's color
+     * @param x The column where the coin was placed in
+     * @param y The row where coin was placed in
+     * @param color The color of the placed coin
+     * @see Game#checkWinStat(int, int, Color)
+     */
     public void addToBoard(int x, int y, Color color) {
         board[x][y] = color;
         won = checkWinStat(x, y, color);
@@ -93,6 +125,12 @@ public class Game {
         }
     }
 
+    /**
+     * @param x The column where the last coin was placed in
+     * @param y The row where the last coin was placed in
+     * @param player The color of the last placed coin
+     * @return If the current move won the game it returns true, otherwise false
+     */
     public boolean checkWinStat(int x, int y, Color player) {
         int count = 0;
         int shuffle = 0;

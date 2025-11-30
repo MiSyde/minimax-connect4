@@ -8,6 +8,16 @@ public class AI {
 
     public AI(Game game) { this.game = game; }
 
+    /**
+     * Calculates the best move possible with the given depth, based on the minimax algorithm and alpha-beta pruning
+     * @param board The board it gets as a starting point
+     * @param depth The amount of times it will go through the algorithm
+     * @return The column it deemes best
+     * @see AI#minimax(Color[][], int, int, int, boolean)
+     * @see AI#copyBoard(Color[][])
+     * @see Game#getCurrentY(Color[][], int)
+     * @see AI#checkWin(Color[][], Color)
+     */
     public int getBestMove(Color[][] board, int depth) {
         int bestScore = Integer.MIN_VALUE;
         int bestCol = 3;
@@ -21,9 +31,7 @@ public class AI {
 
                 temp[currentCol][row] = color;
 
-                if (checkWin(temp, color)) {
-                    return currentCol;
-                }
+                if (checkWin(temp, color)) { return currentCol; }
 
                 if(checkWin(temp, Color.RED)) { return currentCol; }
 
@@ -38,6 +46,21 @@ public class AI {
         return bestCol;
     }
 
+    /**
+     * Calculates a score for a series of moves
+     * If the
+     * @param board The board the AI is doing the search in 
+     * @param depth Depth of the search
+     * @param alpha AI's best score so far - for pruning
+     * @param beta Human's best score so far - for pruning
+     * @param maximizing If true, it uses the AI part of the algorithm and then sends it into the human part.
+     *                   If false, it uses the human part of the algorithm and then sends it into the AI part.
+     * @return The best score for the current board state
+     * @see AI#makeMove(Color[][], int, Color) 
+     * @see AI#getWinner(Color[][]) 
+     * @see Game#isBoardFull(Color[][]) 
+     * @see Game#isColumnAvailable(Color[][], int) 
+     */
     private int minimax(Color[][] board, int depth, int alpha, int beta, boolean maximizing) {
         Color winner = getWinner(board);
         if(winner != null) {
@@ -74,6 +97,11 @@ public class AI {
         }
     }
 
+    /**
+     * Scours the board to see if either color can win anywhere
+     * @param board The board in which the checking happens
+     * @return The color that can win in the next move
+     */
     private Color getWinner(Color[][] board) {
         for (int col = 0; col < 7; col++) {
             for (int row = 0; row < 6; row++) {
@@ -117,6 +145,11 @@ public class AI {
         return winner != null && game.isColorEqual(winner, player);
     }
 
+    /**
+     * Calculates the score of the current board given both colors' positions
+     * @param board The board the function works with
+     * @return The final score it got after subtracting and adding
+     */
     private int evaluateBoard(Color[][] board) {
         int score = 0;
 
@@ -131,6 +164,12 @@ public class AI {
         return score;
     }
 
+    /**
+     *
+     * @param board The board the function works with
+     * @param player The color that we are looking for on the board
+     * @return The score of the board
+     */
     private int evaluateLines(Color[][] board, Color player) {
         int score = 0;
 
@@ -157,6 +196,16 @@ public class AI {
         return score;
     }
 
+    /**
+     *
+     * @param board The board the function works with
+     * @param col
+     * @param row
+     * @param dCol
+     * @param dRow
+     * @param player
+     * @return
+     */
     private int evaluateWindow(Color[][] board, int col, int row, int dCol, int dRow, Color player) {
         int score = 0;
         int playerCount = 0;
@@ -188,14 +237,24 @@ public class AI {
         return score;
     }
 
+    /**
+     *
+     * @param board
+     * @param col
+     * @param player
+     * @return
+     */
     private Color[][] makeMove(Color[][] board, int col, Color player) {
         Color[][] newBoard = copyBoard(board);
         int row = game.getCurrentY(newBoard, col);
-        if (row != -1) {
-            newBoard[col][row] = player;
-        }
+        if (row != -1) { newBoard[col][row] = player; }
         return newBoard;
     }
+
+    /**
+     * @param board The board that will be copied
+     * @return The copy of the board in the argument
+     */
 
     private Color[][] copyBoard(Color[][] board) {
         Color[][] newBoard = new Color[7][6];

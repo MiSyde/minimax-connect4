@@ -3,6 +3,9 @@ package gui;
 import java.awt.Color;
 import java.awt.Graphics;
 
+/**
+ *
+ */
 public abstract class Coin {
     private int x;
     private int y;
@@ -50,6 +53,9 @@ public abstract class Coin {
 
     public abstract void draw(Graphics g);
 
+    /**
+     *
+     */
     static public class RedCoin extends Coin{
 
 
@@ -66,6 +72,9 @@ public abstract class Coin {
 
     }
 
+    /**
+     *
+     */
     static public class YellowCoin extends Coin{
 
         public YellowCoin(int x, int y, int height, int width, int column, int row) {

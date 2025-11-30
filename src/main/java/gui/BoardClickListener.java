@@ -1,5 +1,7 @@
 package gui;
 
+import core.Game;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -9,10 +11,20 @@ public class BoardClickListener extends MouseAdapter {
 
     private final CoinPanel panel;
 
+    /**
+     * @param panel The panel that will be assigned to this listener
+     */
     public BoardClickListener(CoinPanel panel) {
         this.panel = panel;
     }
 
+    /**
+     * Handles the logic behind triggering 'game overs', adding coins, when to add them and their color
+     * @see CoinPanel#applyMove(int, int)
+     * @see BoardClickListener#posCalc(MouseEvent)
+     * @see BoardClickListener#redAdd(int, int)
+     * @see Board#endScreenDelay(int, String)
+     */
     public void mouseClicked(MouseEvent e) {
         if(panel.getAI() != null){
             if(panel.game.isAIThinking()) { return; }
@@ -43,14 +55,20 @@ public class BoardClickListener extends MouseAdapter {
                 }
             }
         }
-        if(!panel.game.getWon() && panel.game.isBoardFull(panel.game.getBoard())) { Board.endScreenDelay("Draw!"); }
+        if(!panel.game.getWon() && panel.game.isBoardFull(panel.game.getBoard())) { Board.endScreenDelay(2500, "Draw!"); }
         if(panel.game.getWon()){
 
             String winner = (panel.getTurn() % 2 == 0) ? "Yellow" : "Red";
-            Board.endScreenDelay(winner + " won!");
+            Board.endScreenDelay(2500, winner + " won!");
         }
     }
 
+    /**
+     * Calculates the column where the player clicked and the available row in that column
+     * @return the column and row of the new coin that's about to the placed
+     * @see core.Game#getCurrentY(Color[][], int)
+     * @see MouseEvent#getX()
+     */
     private int[] posCalc(MouseEvent e){
         int x = -1;
         int y = -1;
@@ -70,6 +88,13 @@ public class BoardClickListener extends MouseAdapter {
         return new int[]{x, y};
     }
 
+    /**
+     * Puts a red coin on the board at the given coordinates
+     * @param x The column of the coin
+     * @param y The row of the coin
+     * @see core.Game#addToBoard(int, int, Color) 
+     * @see CoinPanel#addCoin(Coin)  
+     */
     private void redAdd(int x, int y){
         int cellWidth = Board.width / 7;
         int cellHeight = Board.height / 6;

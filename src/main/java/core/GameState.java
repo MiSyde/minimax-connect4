@@ -40,7 +40,6 @@ public class GameState {
         gameWon = game.getWon();
         this.gameMode = gameMode;
         this.turn = turn;
-
     }
 
     public java.util.List<Coin> getCoins() { return coins; }

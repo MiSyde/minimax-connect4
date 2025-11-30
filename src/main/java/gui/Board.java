@@ -1,6 +1,5 @@
 package gui;
 
-import com.google.gson.Gson;
 import core.Game;
 import core.GameState;
 import core.SaveSystem;
@@ -23,16 +22,16 @@ public class Board {
     private static CoinPanel currentGamePanel;
     private static String current;
     private static JPanel endScreen;
-    private static final java.util.ArrayList<String> thisSession = new ArrayList<>();
+    private static final ArrayList<String> thisSession = new ArrayList<>();
 
     public static void main(String[] args) { SwingUtilities.invokeLater(Board::createAllGUIs); }
 
-    /*
-    Creates the main frame, and it's panel with a cardlayout.
-    It adds all the windows to said cardlayout, so the program can switch between them later on.
-    Sets some of the frame's default settings, it's starting size, starting position, etc.
-    The program needs to know when the frame gets resized (for relative sizing and positioning) / closed (for saving),
-    therefore these listeners also get added to the frame.
+    /**
+     * Creates the main frame, and it's panel with a cardlayout.
+     * It adds all the windows to said cardlayout, so the program can switch between them later on.
+     * Sets some of the frame's default settings, it's starting size, starting position, etc.
+     * The program needs to know when the frame gets resized (for relative sizing and positioning) / closed (for saving),
+     * therefore these listeners also get added to the frame.
      */
     private static void createAllGUIs() {
         JFrame window = new JFrame("Connect 4");
@@ -90,10 +89,10 @@ public class Board {
         showStartScreen();
     }
 
-    /*
-    If the hasn't ended but the program still exited, the function saves the board's current state and remove the
-    current mode's name from a list, which keeps track of the gamemodes that have been played this session, so that way
-    it won't delete that gamemode's savefile.
+    /**
+     * If the hasn't ended but the program still exited, the function saves the board's current state and remove the
+     * current mode's name from a list, which keeps track of the gamemodes that have been played this session, so that way
+     * it won't delete that gamemode's savefile.
      */
     private static void saveProgress() {
         if(!currentGamePanel.game.getWon() && !currentGamePanel.game.isBoardFull(currentGamePanel.game.getBoard())){
@@ -112,8 +111,9 @@ public class Board {
         thisSession.clear();
     }
 
-    /*
-    If the saves directory contains a savefile for the given gamemode, it gets loaded.
+    /**
+     * If the saves directory contains a savefile for the given gamemode, it gets loaded.
+     * @param filename the name of the gamemode - PVE or PVP
      */
     private static GameState loadProgress(String filename){
         try{
@@ -124,8 +124,10 @@ public class Board {
         return null;
     }
 
-    /*
-
+    /**
+     * Creates the screen where the user chooses which mode to play
+     * The screen - startPanel - gets assigned a title and another panel - modePanel
+     * The latter panel gets assigned buttons, and those buttons get actionlisteners
      */
     private static JPanel createStartScreen() {
         JPanel startPanel = new JPanel(new BorderLayout());
@@ -155,6 +157,11 @@ public class Board {
         return startPanel;
     }
 
+    /**
+     * The screen where the game will be played gets created
+     * The game panel gets the BoardClickListener that has been created in a seperate class
+     * @param mode The selected gamemode
+     */
     private static CoinPanel createGamePanel(String mode) {
         Game game = new Game();
         boolean ai = "PVE".equals(mode);
@@ -163,6 +170,11 @@ public class Board {
         return panel;
     }
 
+    /**
+     * Creates the screen that shows when the game ends
+     * The panel gets buttons with actionlisteners added to it
+     * The panel also has a panel, which receives a property so it can be manipulated later
+     */
     private static JPanel createEndScreen() {
         JPanel endScreen = new JPanel(new BorderLayout());
         endScreen.setBackground(new Color(27,60,83));
@@ -197,6 +209,10 @@ public class Board {
         return endScreen;
     }
 
+    /**
+     * Generic button creator for the gamemode selecting screen
+     * @param title The button will be assigned this title
+     */
     private static JButton createMenuButton(String title) {
         JButton button = new JButton(title);
         button.setFont(new Font("Arial", Font.BOLD, 40));
@@ -206,10 +222,16 @@ public class Board {
         return button;
     }
 
+    /**
+     * Changes the frame's screen to the gamemode selection screen
+     */
     public static void showStartScreen() {
         cardLayout.show(mainPanel, "START");
     }
 
+    /**
+     * Changes the frame's screen to the game's screen
+     */
     public static void showGameScreen() {
         cardLayout.show(mainPanel, "GAME");
         if(currentGamePanel != null) {
@@ -217,18 +239,32 @@ public class Board {
         }
     }
 
-    public static void endScreenDelay(String winnerMessage){
-        Timer timer = new Timer(2500, _ -> showEndScreen(winnerMessage));
+    /**
+     * @param time The delay which after the ending screen will be shown
+     * @param winnerMessage The message that's going to be displayed on the ending screen
+     */
+    public static void endScreenDelay(int time, String winnerMessage){
+        Timer timer = new Timer(time, _ -> showEndScreen(winnerMessage));
         timer.setRepeats(false);
         timer.start();
     }
 
+    /**
+     * Changes the main frame's screen to the ending screen
+     * @param winnerMessage The message that's going to be displayed
+     */
     public static void showEndScreen(String winnerMessage){
         JLabel result = (JLabel) endScreen.getClientProperty("results");
         if(result != null) { result.setText(winnerMessage); }
         cardLayout.show(mainPanel, "END");
     }
 
+    /**
+     * Starts up game screen with the selected gamemode
+     * If the current session's list doesn't contain the selected gamemode, it gets added to the list
+     * If there is a savefile in the saves directory to the selected gamemode, it gets loaded instead of an empty board
+     * @param gameMode The selected gamemode - PVP/PVE
+     */
     private static void startGame(String gameMode) {
         if(!thisSession.contains(gameMode)) {
             thisSession.add(gameMode);
@@ -248,6 +284,9 @@ public class Board {
         mainPanel.repaint();
     }
 
+    /**
+     * Triggers the game starting function, with the last selected gamemode
+     */
     private static void restartGame() {
         startGame(current);
     }
