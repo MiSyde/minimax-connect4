@@ -23,6 +23,11 @@ public class SaveSystem {
         new File(saveDirection).mkdir();
     }
 
+    /**
+     * Saves the current state of the game into a JSON file
+     * @param gameState The state that will be saved
+     * @param fileName The name of the mode that's being saved
+     */
     public static void saveGame(GameState gameState, String fileName) {
         try(Writer writer = new FileWriter(saveDirection + fileName + ".json")) {
             gson.toJson(gameState, writer);
@@ -31,6 +36,11 @@ public class SaveSystem {
         }
     }
 
+    /**
+     * Loads the saved gamestate from a JSON file
+     * @param fileName The name of the gamemode
+     * @return The state of the loaded game, if there was a savefile with the given mode, otherwise <code>null</code>.
+     */
     public static GameState loadGame(String fileName) {
         try{
             String content = new String(Files.readAllBytes(Paths.get(saveDirection + fileName + ".json")));
@@ -41,6 +51,10 @@ public class SaveSystem {
         }
     }
 
+    /**
+     * Deletes the save of the given mode
+     * @param fileName The name of the gamemode
+     */
     public static void deleteSavedGame(String fileName) {
         File file = new File(saveDirection + fileName + ".json");
         file.delete();

@@ -7,7 +7,10 @@ import java.awt.*;
 import java.lang.reflect.Type;
 
 public class CoinAdapter implements JsonSerializer<Coin>, JsonDeserializer<Coin> {
-
+    /**
+     * Converts a coin type from a JSON file, to a Coin class object
+     * @return A red or a yellow coin object
+     */
     @Override
     public Coin deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject obj = jsonElement.getAsJsonObject();
@@ -27,6 +30,9 @@ public class CoinAdapter implements JsonSerializer<Coin>, JsonDeserializer<Coin>
         return null;
     }
 
+    /**
+     * @return A coin as a JSON entry
+     */
     @Override
     public JsonElement serialize(Coin coin, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject obj = new JsonObject();

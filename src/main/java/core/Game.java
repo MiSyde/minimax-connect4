@@ -26,7 +26,6 @@ public class Game {
     }
 
     /**
-     *
      * @param board The board in which the check happens
      * @param x The given column
      * @return The first available row of the column
@@ -126,6 +125,7 @@ public class Game {
     }
 
     /**
+     * Checks if the given color has won the game or not with the last placed coin
      * @param x The column where the last coin was placed in
      * @param y The row where the last coin was placed in
      * @param player The color of the last placed coin

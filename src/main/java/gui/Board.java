@@ -32,6 +32,11 @@ public class Board {
      * Sets some of the frame's default settings, it's starting size, starting position, etc.
      * The program needs to know when the frame gets resized (for relative sizing and positioning) / closed (for saving),
      * therefore these listeners also get added to the frame.
+     * @see Board#createStartScreen()
+     * @see Board#createEndScreen()
+     * @see Board#createGamePanel(String)
+     * @see Board#saveProgress()
+     * @see Board#showStartScreen()
      */
     private static void createAllGUIs() {
         JFrame window = new JFrame("Connect 4");
@@ -93,6 +98,8 @@ public class Board {
      * If the hasn't ended but the program still exited, the function saves the board's current state and remove the
      * current mode's name from a list, which keeps track of the gamemodes that have been played this session, so that way
      * it won't delete that gamemode's savefile.
+     * @see SaveSystem#saveGame(GameState, String)
+     * @see SaveSystem#deleteSavedGame(String)
      */
     private static void saveProgress() {
         if(!currentGamePanel.game.getWon() && !currentGamePanel.game.isBoardFull(currentGamePanel.game.getBoard())){
@@ -114,6 +121,7 @@ public class Board {
     /**
      * If the saves directory contains a savefile for the given gamemode, it gets loaded.
      * @param filename the name of the gamemode - PVE or PVP
+     * @see SaveSystem#loadGame(String)
      */
     private static GameState loadProgress(String filename){
         try{
@@ -128,6 +136,7 @@ public class Board {
      * Creates the screen where the user chooses which mode to play
      * The screen - startPanel - gets assigned a title and another panel - modePanel
      * The latter panel gets assigned buttons, and those buttons get actionlisteners
+     * @see Board#createMenuButton(String)
      */
     private static JPanel createStartScreen() {
         JPanel startPanel = new JPanel(new BorderLayout());
@@ -159,7 +168,7 @@ public class Board {
 
     /**
      * The screen where the game will be played gets created
-     * The game panel gets the BoardClickListener that has been created in a seperate class
+     * The game panel gets the <code>BoardClickListener</code> that has been created in a seperate class
      * @param mode The selected gamemode
      */
     private static CoinPanel createGamePanel(String mode) {
@@ -264,6 +273,10 @@ public class Board {
      * If the current session's list doesn't contain the selected gamemode, it gets added to the list
      * If there is a savefile in the saves directory to the selected gamemode, it gets loaded instead of an empty board
      * @param gameMode The selected gamemode - PVP/PVE
+     * @see Board#loadProgress(String)
+     * @see Board#createGamePanel(String)
+     * @see Board#showGameScreen()
+     * @see CoinPanel#loadFromState(GameState)
      */
     private static void startGame(String gameMode) {
         if(!thisSession.contains(gameMode)) {
@@ -286,6 +299,7 @@ public class Board {
 
     /**
      * Triggers the game starting function, with the last selected gamemode
+     * @see Board#startGame(String)
      */
     private static void restartGame() {
         startGame(current);

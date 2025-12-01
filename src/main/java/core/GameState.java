@@ -15,23 +15,13 @@ public class GameState {
 
     public Color[][] getBoard() { return board; }
 
-    public void setBoard(Color[][] board) { this.board = board; }
-
     public Color getCurrentPlayer() { return currentPlayer; }
-
-    public void setCurrentPlayer(Color currentPlayer) { this.currentPlayer = currentPlayer; }
 
     public boolean isGameWon() { return gameWon; }
 
-    public void setGameWon(boolean gameWon) { this.gameWon = gameWon; }
-
     public String getGameMode() { return gameMode; }
 
-    public void setGameMode(String gameMode) { this.gameMode = gameMode; }
-
     public int getTurn() { return turn; }
-
-    public void setTurn(int turn) { this.turn = turn; }
 
     public GameState(Game game, String gameMode, int turn, java.util.List<Coin> coins) {
         this.coins = new ArrayList<>(coins);
@@ -44,6 +34,10 @@ public class GameState {
 
     public java.util.List<Coin> getCoins() { return coins; }
 
+    /**
+     * @param board The board that will be copied
+     * @return The copy of the board in the argument
+     */
     private Color[][] copyBoard(Color[][] board) {
         Color[][] newBoard = new Color[7][6];
         for (int i = 0; i < 7; i++) {

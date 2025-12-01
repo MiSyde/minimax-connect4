@@ -10,9 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JPanel;
 
-/**
- *
- */
 public class CoinPanel extends JPanel {
 
     Game game;
@@ -20,10 +17,6 @@ public class CoinPanel extends JPanel {
     private int turn;
     private AI ai = null;
 
-    /**
-     *
-     * @param coin
-     */
     public void addCoin(Coin coin) {
         coins.add(coin);
         ++turn;
@@ -56,6 +49,13 @@ public class CoinPanel extends JPanel {
 
     public Game getGame() { return game; }
 
+    /**
+     * If it's the robot's turn, it calculates the best move with the given depth and places it on the board
+     * Afterwards it lets the player move
+     * @see CoinPanel#applyMove(int, int)
+     * @see Game#getCurrentY(Color[][], int)
+     * @see AI#getBestMove(Color[][], int)
+     */
     public void triggerAIMove() {
         if (game.getWon() || !game.isYellow(game.getCurrentPlayer()) || game.isAIThinking()) {
             return;
@@ -77,6 +77,13 @@ public class CoinPanel extends JPanel {
 
     public java.util.List<Coin> getCoins() { return new ArrayList<>(coins); }
 
+    /**
+     * Puts a yellow coin on the board in the given coordinates
+     * @param x The column in which the coin will be placed in
+     * @param y The row in which the coin will be placed in
+     * @see Game#addToBoard(int, int, Color)
+     * @see CoinPanel#addCoin(Coin)
+     */
     public void applyMove(int x, int y) {
         int cellWidth = Board.width / 7;
         int cellHeight = Board.height / 6;
@@ -90,6 +97,9 @@ public class CoinPanel extends JPanel {
 
     public int getTurn() { return turn; }
 
+    /**
+     * Draws the separating lines that form cells on the window
+     */
     private void boardLineSetup(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(4));
@@ -117,6 +127,10 @@ public class CoinPanel extends JPanel {
         repaint();
     }
 
+    /**
+     * After window resizing, it recalculates the new size of the coins
+     * @see Coin#setNewData(int, int, int, int)
+     */
     public void recalcPos(){
         int cellWidth = Board.width / 7;
         int cellHight = Board.height / 6;
@@ -128,6 +142,9 @@ public class CoinPanel extends JPanel {
         }
     }
 
+    /**
+     * Draws the empty coinslots on the background of the board
+     */
     private void boardCircleSetup(Graphics g) {
         int w = Board.width / 7;
         int h = Board.height / 6;
@@ -145,7 +162,9 @@ public class CoinPanel extends JPanel {
         }
     }
 
-
+    /**
+     * Draws the interface of the board
+     */
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);

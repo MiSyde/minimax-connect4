@@ -140,6 +140,13 @@ public class AI {
         return null;
     }
 
+    /**
+     * 
+     * @param board The board on which the check will run on
+     * @param player The color of the player it checks
+     * @see AI#getWinner(Color[][]) 
+     * @return If the winner is <code>YELLOW</code> it returns true, false otherwise
+     */
     private boolean checkWin(Color[][] board, Color player) {
         Color winner = getWinner(board);
         return winner != null && game.isColorEqual(winner, player);
@@ -149,6 +156,7 @@ public class AI {
      * Calculates the score of the current board given both colors' positions
      * @param board The board the function works with
      * @return The final score it got after subtracting and adding
+     * @see AI#evaluateLines(Color[][], Color) 
      */
     private int evaluateBoard(Color[][] board) {
         int score = 0;
@@ -165,10 +173,11 @@ public class AI {
     }
 
     /**
-     *
+     * Evaluates the whole board
      * @param board The board the function works with
      * @param player The color that we are looking for on the board
      * @return The score of the board
+     * @see AI#evaluateWindow(Color[][], int, int, int, int, Color)
      */
     private int evaluateLines(Color[][] board, Color player) {
         int score = 0;
@@ -197,14 +206,14 @@ public class AI {
     }
 
     /**
-     *
+     * Calculates a score, based on how many coins are lined up and what color they have
      * @param board The board the function works with
-     * @param col
-     * @param row
-     * @param dCol
-     * @param dRow
-     * @param player
-     * @return
+     * @param col The starting column
+     * @param row The starting row
+     * @param dCol The direction it will move in, in the column section
+     * @param dRow  The direction it will move in, in the row section
+     * @param player The color of the player that the function will calculate for
+     * @return The score
      */
     private int evaluateWindow(Color[][] board, int col, int row, int dCol, int dRow, Color player) {
         int score = 0;
@@ -238,11 +247,12 @@ public class AI {
     }
 
     /**
-     *
-     * @param board
-     * @param col
-     * @param player
-     * @return
+     * @param board The board the function uses to copy and put a coin in it
+     * @param col The column it will place a coin in
+     * @param player The color of the coin
+     * @return The copied board
+     * @see AI#copyBoard(Color[][])
+     * @see Game#getCurrentY(Color[][], int)
      */
     private Color[][] makeMove(Color[][] board, int col, Color player) {
         Color[][] newBoard = copyBoard(board);
@@ -255,7 +265,6 @@ public class AI {
      * @param board The board that will be copied
      * @return The copy of the board in the argument
      */
-
     private Color[][] copyBoard(Color[][] board) {
         Color[][] newBoard = new Color[7][6];
         for (int i = 0; i < 7; i++) {
