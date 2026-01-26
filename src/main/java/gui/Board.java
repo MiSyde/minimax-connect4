@@ -24,7 +24,10 @@ public class Board {
     private static JPanel endScreen;
     private static final ArrayList<String> thisSession = new ArrayList<>();
 
-    public static void main(String[] args) { SwingUtilities.invokeLater(Board::createAllGUIs); }
+    public static void main(String[] args) {
+        Board board = new Board();
+        SwingUtilities.invokeLater(() -> { board.createAllGUIs(board); });
+    }
 
     /**
      * Creates the main frame, and it's panel with a cardlayout.
@@ -32,13 +35,14 @@ public class Board {
      * Sets some of the frame's default settings, it's starting size, starting position, etc.
      * The program needs to know when the frame gets resized (for relative sizing and positioning) / closed (for saving),
      * therefore these listeners also get added to the frame.
-     * @see Board#createStartScreen()
-     * @see Board#createEndScreen()
-     * @see Board#createGamePanel(String)
+     *
+     * @see Board#createStartScreen(Board)
+     * @see Board#createEndScreen(Board)
+     * @see Board#createGamePanel(String, Board)
      * @see Board#saveProgress()
      * @see Board#showStartScreen()
      */
-    private static void createAllGUIs() {
+    private void createAllGUIs(Board board) {
         JFrame window = new JFrame("Connect 4");
         JFrame.setDefaultLookAndFeelDecorated(true);
         URL icon = Board.class.getResource("/gui/icon.png");
@@ -51,10 +55,10 @@ public class Board {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        JPanel startScreen = createStartScreen();
-        endScreen = createEndScreen();
+        JPanel startScreen = createStartScreen(board);
+        endScreen = createEndScreen(board);
 
-        currentGamePanel = createGamePanel("");
+        currentGamePanel = createGamePanel("", board);
 
         mainPanel.add(startScreen, "START");
         mainPanel.add(currentGamePanel, "GAME");
@@ -101,7 +105,7 @@ public class Board {
      * @see SaveSystem#saveGame(GameState, String)
      * @see SaveSystem#deleteSavedGame(String)
      */
-    private static void saveProgress() {
+    private void saveProgress() {
         if(!currentGamePanel.game.getWon() && !currentGamePanel.game.isBoardFull(currentGamePanel.game.getBoard())){
             GameState state = new GameState(currentGamePanel.getGame(), current, currentGamePanel.getTurn(), currentGamePanel.getCoins());
             SaveSystem.saveGame(state, current);
@@ -123,7 +127,7 @@ public class Board {
      * @param filename the name of the gamemode - PVE or PVP
      * @see SaveSystem#loadGame(String)
      */
-    private static GameState loadProgress(String filename){
+    private GameState loadProgress(String filename){
         try{
             return SaveSystem.loadGame(filename);
         } catch(Exception e){
@@ -138,7 +142,7 @@ public class Board {
      * The latter panel gets assigned buttons, and those buttons get actionlisteners
      * @see Board#createMenuButton(String)
      */
-    private static JPanel createStartScreen() {
+    private JPanel createStartScreen(Board board) {
         JPanel startPanel = new JPanel(new BorderLayout());
         startPanel.setBackground(new Color(27,60,83));
 
@@ -154,8 +158,8 @@ public class Board {
         JButton pvp = createMenuButton("Player versus Player");
         JButton pve = createMenuButton("Player versus AI");
 
-        pvp.addActionListener(_ -> startGame("PVP"));
-        pve.addActionListener(_ -> startGame("PVE"));
+        pvp.addActionListener(_ -> startGame("PVP", board));
+        pve.addActionListener(_ -> startGame("PVE", board));
 
         modePanel.add(pvp);
         modePanel.add(pve);
@@ -171,11 +175,11 @@ public class Board {
      * The game panel gets the <code>BoardClickListener</code> that has been created in a seperate class
      * @param mode The selected gamemode
      */
-    private static CoinPanel createGamePanel(String mode) {
+    private CoinPanel createGamePanel(String mode, Board board) {
         Game game = new Game();
         boolean ai = "PVE".equals(mode);
         CoinPanel panel = new CoinPanel(game, ai);
-        panel.addMouseListener(new BoardClickListener(panel));
+        panel.addMouseListener(new BoardClickListener(panel, board));
         return panel;
     }
 
@@ -184,7 +188,7 @@ public class Board {
      * The panel gets buttons with actionlisteners added to it
      * The panel also has a panel, which receives a property so it can be manipulated later
      */
-    private static JPanel createEndScreen() {
+    private JPanel createEndScreen(Board board) {
         JPanel endScreen = new JPanel(new BorderLayout());
         endScreen.setBackground(new Color(27,60,83));
 
@@ -199,7 +203,7 @@ public class Board {
         JButton newGameButton = new JButton("NEW GAME");
         JButton exitButton = new JButton("EXIT");
 
-        restartButton.addActionListener(_ -> restartGame());
+        restartButton.addActionListener(_ -> restartGame(board));
         newGameButton.addActionListener(_ -> showStartScreen());
         exitButton.addActionListener(_ -> {
             JFrame window = (JFrame) mainPanel.getClientProperty("window");
@@ -222,7 +226,7 @@ public class Board {
      * Generic button creator for the gamemode selecting screen
      * @param title The button will be assigned this title
      */
-    private static JButton createMenuButton(String title) {
+    private JButton createMenuButton(String title) {
         JButton button = new JButton(title);
         button.setFont(new Font("Arial", Font.BOLD, 40));
         button.setBackground(new Color(35,76,106));
@@ -234,14 +238,14 @@ public class Board {
     /**
      * Changes the frame's screen to the gamemode selection screen
      */
-    public static void showStartScreen() {
+    public void showStartScreen() {
         cardLayout.show(mainPanel, "START");
     }
 
     /**
      * Changes the frame's screen to the game's screen
      */
-    public static void showGameScreen() {
+    public void showGameScreen() {
         cardLayout.show(mainPanel, "GAME");
         if(currentGamePanel != null) {
             currentGamePanel.requestFocusInWindow();
@@ -252,7 +256,7 @@ public class Board {
      * @param time The delay which after the ending screen will be shown
      * @param winnerMessage The message that's going to be displayed on the ending screen
      */
-    public static void endScreenDelay(int time, String winnerMessage){
+    public void endScreenDelay(int time, String winnerMessage){
         Timer timer = new Timer(time, _ -> showEndScreen(winnerMessage));
         timer.setRepeats(false);
         timer.start();
@@ -262,7 +266,7 @@ public class Board {
      * Changes the main frame's screen to the ending screen
      * @param winnerMessage The message that's going to be displayed
      */
-    public static void showEndScreen(String winnerMessage){
+    public void showEndScreen(String winnerMessage){
         JLabel result = (JLabel) endScreen.getClientProperty("results");
         if(result != null) { result.setText(winnerMessage); }
         cardLayout.show(mainPanel, "END");
@@ -274,18 +278,18 @@ public class Board {
      * If there is a savefile in the saves directory to the selected gamemode, it gets loaded instead of an empty board
      * @param gameMode The selected gamemode - PVP/PVE
      * @see Board#loadProgress(String)
-     * @see Board#createGamePanel(String)
+     * @see Board#createGamePanel(String, Board)
      * @see Board#showGameScreen()
      * @see CoinPanel#loadFromState(GameState)
      */
-    private static void startGame(String gameMode) {
+    private void startGame(String gameMode, Board board) {
         if(!thisSession.contains(gameMode)) {
             thisSession.add(gameMode);
         }
 
         current = gameMode;
         mainPanel.remove(currentGamePanel);
-        currentGamePanel = createGamePanel(gameMode);
+        currentGamePanel = createGamePanel(gameMode, board);
         mainPanel.add(currentGamePanel, "GAME");
         currentGamePanel.resetGame();
         GameState loadedState = loadProgress(gameMode);
@@ -299,9 +303,9 @@ public class Board {
 
     /**
      * Triggers the game starting function, with the last selected gamemode
-     * @see Board#startGame(String)
+     * @see Board#startGame(String, Board)
      */
-    private static void restartGame() {
-        startGame(current);
+    private void restartGame(Board board) {
+        startGame(current, board);
     }
 }

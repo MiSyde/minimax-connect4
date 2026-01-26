@@ -10,11 +10,13 @@ import java.awt.event.MouseEvent;
 public class BoardClickListener extends MouseAdapter {
 
     private final CoinPanel panel;
+    private final Board board;
 
     /**
      * @param panel The panel that will be assigned to this listener
      */
-    public BoardClickListener(CoinPanel panel) {
+    public BoardClickListener(CoinPanel panel, Board board) {
+        this.board = board;
         this.panel = panel;
     }
 
@@ -55,11 +57,11 @@ public class BoardClickListener extends MouseAdapter {
                 }
             }
         }
-        if(!panel.game.getWon() && panel.game.isBoardFull(panel.game.getBoard())) { Board.endScreenDelay(2500, "Draw!"); }
+        if(!panel.game.getWon() && panel.game.isBoardFull(panel.game.getBoard())) { board.endScreenDelay(2500, "Draw!"); }
         if(panel.game.getWon()){
 
             String winner = (panel.getTurn() % 2 == 0) ? "Yellow" : "Red";
-            Board.endScreenDelay(2500, winner + " won!");
+            board.endScreenDelay(2500, winner + " won!");
         }
     }
 
