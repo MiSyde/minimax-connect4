@@ -1,11 +1,17 @@
 package gui;
 
-import core.Game;
+import core.ChangeColorRunnable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BoardClickListener extends MouseAdapter {
 
@@ -59,9 +65,35 @@ public class BoardClickListener extends MouseAdapter {
         }
         if(!panel.game.getWon() && panel.game.isBoardFull(panel.game.getBoard())) { board.endScreenDelay(2500, "Draw!"); }
         if(panel.game.getWon()){
+            Color winningColor = (panel.getTurn() % 2 == 0) ? Color.YELLOW : Color.RED;
+            ArrayList<Coin> winningCoins = new ArrayList<>();
+            ArrayList<int[]> winningCoinCords = panel.game.getConsecutiveTiles();
+            for(Coin c : panel.getCoins()) {
+                if(!c.getColor().equals(winningColor)) continue;
+                int[] cords = new int[] {c.getColumn(), c.getRow()};
+                for(int[] i : winningCoinCords) {
+                    if(i[0] == cords[0] && i[1] == cords[1]) winningCoins.add(c);
+                }
+                if(winningCoinCords.contains(cords)) winningCoins.add(c);
+            }
+            ChangeColorRunnable changeColor = new ChangeColorRunnable(winningCoins, Color.PINK, panel);
+            ChangeColorRunnable changeBack = new ChangeColorRunnable(winningCoins, winningColor, panel);
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+            AtomicInteger count = new AtomicInteger(0);
+            ScheduledFuture<?>[] blink = new ScheduledFuture[1];
+            blink[0] = executorService.scheduleAtFixedRate(() -> {
+                if(count.getAndIncrement() % 2 == 0) {
+                    changeColor.run();
+                } else {
+                    changeBack.run();
+                }
+                if(count.get() >= 5) {
+                    blink[0].cancel(false);
+                }
+            }, 250, 500, TimeUnit.MILLISECONDS);
 
-            String winner = (panel.getTurn() % 2 == 0) ? "Yellow" : "Red";
-            board.endScreenDelay(2500, winner + " won!");
+            String winner = (winningColor == Color.YELLOW) ? "Yellow" : "Red";
+            board.endScreenDelay(3000, winner + " won!");
         }
     }
 
