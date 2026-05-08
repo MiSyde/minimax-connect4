@@ -1,12 +1,14 @@
 package core;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 public class Game {
     Color[][] board;
     boolean won;
     private Color currentPlayer = Color.RED;
     private boolean aiThinking = false;
+    private final ArrayList<int[]> consecutiveTiles = new ArrayList<>();
 
     /**
      * Sets up the board with every cell being black, as a neutral color
@@ -24,6 +26,8 @@ public class Game {
     public Color[][] getBoard() {
         return board;
     }
+
+    public ArrayList<int[]> getConsecutiveTiles() { return consecutiveTiles; }
 
     /**
      * @param board The board in which the check happens
@@ -137,9 +141,10 @@ public class Game {
         int[][] directions = {{1, 0}, {-1, 0}, {1, -1}, {-1, 1}, {-1, -1}, {1, 1}, {0, -1}}; // jobbra, balra, jobbra-le, balra-fel, balra-le, jobbra-fel, le
         for (int[] direction : directions) {
             if (shuffle == 2) {
-                if (count - 1 >= 4) return true;
+                if (count - 1 >= 4) { return true; }
                 count = 0;
                 shuffle = 0;
+                consecutiveTiles.clear();
             }
             int directionX = direction[0];
             int directionY = direction[1];
@@ -160,6 +165,7 @@ public class Game {
                     break;
                 }
                 if (isColorEqual(board[currentX][currentY], player)) {
+                    consecutiveTiles.add(new int[]{currentX, currentY});
                     ++count;
                 }
             }

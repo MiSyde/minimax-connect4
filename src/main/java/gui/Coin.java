@@ -10,6 +10,7 @@ public abstract class Coin {
     private int width;
     private final int column;
     private final int row;
+    protected Color color;
 
     public Coin(int x, int y, int height, int width, int column, int row) {
         this.x = x;
@@ -36,7 +37,9 @@ public abstract class Coin {
         return row;
     }
 
-    public abstract Color getColor();
+    public Color getColor() { return color; }
+
+    public void setColor(Color c) { color = c; }
 
     public int getHeight() { return height; }
 
@@ -62,15 +65,14 @@ public abstract class Coin {
 
         public RedCoin(int x, int y, int height, int width, int column, int row) {
             super(x, y, height, width, column, row);
+            color = Color.RED;
         }
-
-        public Color getColor() { return Color.RED; }
 
         /**
          * Draws a red coin with the coin's current attributes
          */
         public void draw(Graphics g){
-            g.setColor(Color.RED);
+            g.setColor(color);
             g.fillOval(super.getX(), super.getY(), super.getWidth(), super.getHeight());
         }
     }
@@ -79,18 +81,14 @@ public abstract class Coin {
 
         public YellowCoin(int x, int y, int height, int width, int column, int row) {
             super(x, y, height, width, column, row);
-        }
-
-        @Override
-        public Color getColor() {
-            return Color.YELLOW;
+            color = Color.YELLOW;
         }
 
         /**
          * Draws a yellow coin with the coin's current attributes
          */
         public void draw(Graphics g){
-            g.setColor(Color.YELLOW);
+            g.setColor(color);
             g.fillOval(super.getX(), super.getY(), super.getWidth(), super.getHeight());
         }
     }

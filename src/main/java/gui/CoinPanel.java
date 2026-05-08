@@ -16,6 +16,7 @@ public class CoinPanel extends JPanel {
     private final List<Coin> coins = new LinkedList<>();
     private int turn;
     private AI ai = null;
+    private Graphics g;
 
     public void addCoin(Coin coin) {
         coins.add(coin);
@@ -162,12 +163,19 @@ public class CoinPanel extends JPanel {
         }
     }
 
+    public void coinRedraw() {
+        for(Coin coin : coins){
+            coin.draw(g);
+        }
+    }
+
     /**
      * Draws the interface of the board
      */
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+        this.g = g;
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Color bg = new Color(142, 142, 142);
