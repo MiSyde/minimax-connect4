@@ -6,7 +6,7 @@ Project work for the "VIIIAB00" course at Budapest University of Technology and 
 - Local PVE
 
 ## Saving 
-If the player leaves the game before it ends, it seralizes the game's current state into a json file and upon selecting the mode the user left, it loads it back in.\
+If the player leaves the game before it ends, it seralizes the game's current state into a json file and upon selecting the mode the user left, it loads it back in.
 
 ## Graphical elements
 The game's GUI is implemented using Swing.\
